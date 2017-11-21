@@ -1063,6 +1063,7 @@ bool GCanvas::Process1DKeyboardPress(Event_t *event,UInt_t *keysym) {
             proj = ghist->Project(value_low, value_high);
           }
           if(proj){
+            new GCanvas();
             proj->Draw("");
             edited=true;
           }

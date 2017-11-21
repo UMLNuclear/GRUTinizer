@@ -20,6 +20,8 @@ enum kDetectorSystems {
   S800_SIM   = 9,
   LENDA      = 21,
 
+  LARA =700,
+
   SEGA = 64,
   JANUS = 65,
   JANUS_DDAS = 66,

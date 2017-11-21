@@ -346,7 +346,9 @@ class MainWindow(object):
                                   variable=self.predefinedzones,command=self.set_zones)
         zonesmenu.add_checkbutton(label="1 x 2",onvalue='1x2',
                                   variable=self.predefinedzones,command=self.set_zones)
-        zonesmenu.add_checkbutton(label="1 x 3",onvalue='1x3',
+        zonesmenu.add_checkbutton(label="1 x 4",onvalue='1x4',
+                                  variable=self.predefinedzones,command=self.set_zones)
+        zonesmenu.add_checkbutton(label="1 x 6",onvalue='1x6',
                                   variable=self.predefinedzones,command=self.set_zones)
         zonesmenu.add_checkbutton(label="2 x 1",onvalue='2x1',
                                   variable=self.predefinedzones,command=self.set_zones)
@@ -354,7 +356,11 @@ class MainWindow(object):
                                   variable=self.predefinedzones,command=self.set_zones)
         zonesmenu.add_checkbutton(label="2 x 3",onvalue='2x3',
                                   variable=self.predefinedzones,command=self.set_zones)
+        zonesmenu.add_checkbutton(label="2 x 4",onvalue='2x4',
+                                  variable=self.predefinedzones,command=self.set_zones)
         zonesmenu.add_checkbutton(label="2 x 5",onvalue='2x5',
+                                  variable=self.predefinedzones,command=self.set_zones)
+        zonesmenu.add_checkbutton(label="2 x 6",onvalue='2x6',
                                   variable=self.predefinedzones,command=self.set_zones)
         zonesmenu.add_checkbutton(label="3 x 1",onvalue='3x1',
                                   variable=self.predefinedzones,command=self.set_zones)

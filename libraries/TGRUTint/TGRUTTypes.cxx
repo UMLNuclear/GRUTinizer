@@ -15,6 +15,8 @@
 #include "TS800Sim.h"
 #include "TSega.h"
 
+#include "TLara.h"
+
 // Map from string to detector enum.
 // This is used to parse the DetectorEnvironment.env file.
 // This is ONLY used when parsing NSCL data files, not
@@ -29,6 +31,7 @@ std::map<std::string, kDetectorSystems> detector_system_map{
   {"S800_SIM",    kDetectorSystems::S800_SIM},
   {"Lenda",       kDetectorSystems::LENDA},
 
+  {"Lara",        kDetectorSystems::LARA},
 
   {"Sega",        kDetectorSystems::SEGA},
   {"Janus",       kDetectorSystems::JANUS},
@@ -53,6 +56,8 @@ std::map<kDetectorSystems, TDetectorFactoryBase*> detector_factory_map {
   {kDetectorSystems::GRETINA_SIM, new TDetectorFactory<TGretSim>() },
   {kDetectorSystems::S800_SIM,    new TDetectorFactory<TS800Sim>() },
   {kDetectorSystems::LENDA,       new TDetectorFactory<TLenda>() },
+  
+  {kDetectorSystems::LARA,       new TDetectorFactory<TLara>() },
 
   {kDetectorSystems::SEGA,        new TDetectorFactory<TSega>() },
   {kDetectorSystems::JANUS,       new TDetectorFactory<TJanus>() },

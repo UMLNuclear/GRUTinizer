@@ -1,0 +1,24 @@
+
+Lara0 {
+  Address: 0x7000000
+  EnergyCoeff: -6.16556 0.752081
+  TIMECoeff: -96.1388 21349.2 -0.760594
+}
+
+Lara1 {
+  Address: 0x7000001
+  EnergyCoeff:  -6.45125 0.750777
+  TIMECoeff: -96.1388 21349.2 -0.760594
+}
+
+Lara2 {
+  Address: 0x7000002
+  EnergyCoeff:	-4.37286 0.73749
+  TIMECoeff: -96.1388 21349.2 -0.760594
+}
+
+Lara3 {
+  Address: 0x7000003
+  EnergyCoeff: -5.30853 0.725266 
+  TIMECoeff: -96.1388 21349.2 -0.760594
+}

@@ -54,11 +54,11 @@ class TKeyDict(dict):
         output = super(TKeyDict,self).__getitem__(key)
         if isinstance(output, ROOT.TKey):
             replacement_classes = [(ROOT.TH2D, ROOT.GH2D),
-                                   (ROOT.TH1D, ROOT.xH1D),
-                                   (ROOT.TH1F, ROOT.xH1F),
-                                   (ROOT.TH2D, ROOT.xH2D),
-                                   (ROOT.TH3D, ROOT.xH3D),
-                                   ]
+                                   (ROOT.TH1D, ROOT.GH1D)]#,
+                                   #(ROOT.TH1F, ROOT.xH1F),
+                                   #(ROOT.TH2D, ROOT.xH2D),
+                                   #(ROOT.TH3D, ROOT.xH3D),
+                                   #]
 
             output = output.ReadObj()
             for in_cls,out_cls in replacement_classes:
