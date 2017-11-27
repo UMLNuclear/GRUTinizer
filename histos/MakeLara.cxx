@@ -92,7 +92,7 @@ void MakeHistograms(TRuntimeObjects& obj) {
       //   obj.FillHistogram("en_v_times_eq",4096,0,4096,hit.GetEnergy(),4096,0,4096,hit.Time());
       // }
       
-      if(hit.Time()>100 && hit1.Time()>100 && hit.Time() != hit1.Time()){ //&& hit.Time() != hit1.Time()???
+      if(hit.Time()>100 && hit1.Time()>100){ //&& hit.Time() != hit1.Time()???
 
         // if(hit.Time() == hit1.Time()){
         // 	 //std::cout<<hit.GetTime()<<"Bad"<<std::endl;
