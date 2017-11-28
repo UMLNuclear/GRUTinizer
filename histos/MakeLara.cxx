@@ -7,7 +7,8 @@
 
 #include <GCutG.h>
 
-GCutG* timingcut =0;
+GCutG* promptgate =0;
+GCutG* randomgate =0;
 
 // int bad =0;
 // int good =0;
@@ -28,6 +29,23 @@ void MakeHistograms(TRuntimeObjects& obj) {
   double GeWindow = 110;
   double BGOGeWindow = 1200;
   double GeSelfTime = 1250;
+
+  if(!promptgate) {
+    TList *gates = &(obj.GetGates());
+    TIter iter(gates);
+    while(TObject *obj = iter.Next()) {
+      GCutG *gate = (GCutG*)obj;
+      std::string name = gate->GetName();
+      if(!name.compare("promptgate")) {
+        promptgate = gate;
+        std::cout << "found: << " << gate->GetName() << std::endl;
+      } else if(!name.compare("randomgate")) {
+        randomgate = gate;
+        std::cout << "found: << " << gate->GetName() << std::endl;
+      }
+    } 
+  }
+
 
   // if(!timingcut) {
   //   TDirectory *c =gDirectory;
@@ -91,7 +109,7 @@ void MakeHistograms(TRuntimeObjects& obj) {
 	  //   obj.FillHistogram("en_v_times_eq",4096,0,4096,hit.GetEnergy(),4096,0,4096,hit.Time());
 	  // }
       
-	  if(hit.Time()>100 && hit1.Time()>100){ //&& hit.Energy() > xraythresh && hit1.Energy() > xraythresh ???
+	  if(hit.Time()>100 && hit1.Time()>100){ 
 
 	    // if(hit.Time() == hit1.Time()){
 	    // 	 //std::cout<<hit.GetTime()<<"Bad"<<std::endl;
@@ -172,17 +190,33 @@ void MakeHistograms(TRuntimeObjects& obj) {
 	    }
 
 	    if(std::abs(time-time1 + offset) < GeSelfTime){ // < 1250 to get rid of self coincident lines
-	      obj.FillHistogram("delta_v_en",3000,-1500,1500,time-time1 + offset,2048,0,2048,energy);
+	      obj.FillHistogram("delta_v_en",3000,-2000,2000,time-time1 + offset,2000,0,4000,energy);
 	      obj.FillHistogram("en_v_delta",2048,0,2048,energy,3000,-1500,1500,time-time1 + offset);
 	    }
 
-	    if(std::abs(time-time1 + offset) <= GeWindow && std::abs( hit.Time()-hit.GetBGOTime() + bgoffset ) > BGOGeWindow){
+	    //	    if(std::abs( hit.Time()-hit.GetBGOTime() + bgoffset ) > BGOGeWindow && std::abs( hit1.Time()-hit1.GetBGOTime() + bgoffset ) > BGOGeWindow){
+	      if(promptgate->IsInside(time-time1+offset,energy)) {
+		obj.FillHistogram(Form("%s",promptgate->GetName()),"delta_v_en",3000,-2000,2000,time-time1 + offset,2000,0,4000,energy);
+		obj.FillHistogram(Form("%s",promptgate->GetName()),"Coincidence_Matrix",4096,0,4096,hit.GetEnergy(),
+				  4096,0,4096,hit1.GetEnergy());
+		obj.FillHistogram(Form("%s",promptgate->GetName()),"Coincidence_Matrix",4096,0,4096,hit1.GetEnergy(),
+				  4096,0,4096,hit.GetEnergy());
+	      }
+
+	      if(randomgate->IsInside(time-time1+offset,energy)) {
+		obj.FillHistogram(Form("%s",randomgate->GetName()),"delta_v_en",3000,-2000,2000,time-time1 + offset,2000,0,4000,energy);
+
+		obj.FillHistogram(Form("%s",randomgate->GetName()),"Coincidence_Matrix",4096,0,4096,hit.GetEnergy(),
+				  4096,0,4096,hit1.GetEnergy());
+		obj.FillHistogram(Form("%s",randomgate->GetName()),"Coincidence_Matrix",4096,0,4096,hit1.GetEnergy(),
+				  4096,0,4096,hit.GetEnergy());	    
+	      }
+	    
 	      obj.FillHistogram("Coincidence_Matrix",4096,0,4096,hit.GetEnergy(),
 				4096,0,4096,hit1.GetEnergy());
 	      obj.FillHistogram("Coincidence_Matrix",4096,0,4096,hit1.GetEnergy(),
-				4096,0,4096,hit.GetEnergy());
-	    }
-
+				4096,0,4096,hit.GetEnergy());	    
+	      //	    }
 	    // if(hit.GetEnergy()>10 && hit1.GetEnergy()>10){
 	    //   obj.FillHistogram("hit_pattern_en",4,0,4,hit.Channel(),4,0,4,hit1.Channel());	
 	    //   obj.FillHistogram("hit_pattern_en",4,0,4,hit1.Channel(),4,0,4,hit.Channel());	
