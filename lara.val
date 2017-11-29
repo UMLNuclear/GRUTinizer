@@ -1,0 +1,36 @@
+GeWindow {
+  Value: 110
+}
+BGOGeWindow {
+  Value: 1200
+}
+offset_1_0 {
+  Value: 40.0
+}
+offset_2_0 {
+  Value: -177.0
+}
+offset_2_1 {
+  Value: -212.0
+}
+offset_3_0 {
+  Value: -141.0
+}
+offset_3_1 {
+  Value: -179.0
+}
+offset_3_2 {
+  Value: 42.0
+}
+bgoffset_0 {
+  Value: 116.0
+}
+bgoffset_1 {
+  Value: 79.0
+}
+bgoffset_2 {
+  Value: -237.0
+}
+bgoffset_3 {
+  Value: -312.0
+}
