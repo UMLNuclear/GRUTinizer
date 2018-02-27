@@ -3,7 +3,7 @@
 #include "TRandom.h"
 
 
-TLaraHit::TLaraHit() {
+TLaraHit::TLaraHit():fBGOTime(-1) {
   Clear();
 }
 
@@ -20,6 +20,7 @@ void TLaraHit::Copy(TObject& obj) const {
 
 void TLaraHit::Clear(Option_t* opt) {
   TDetectorHit::Clear(opt);
+  fBGOTime=-1;
 }
 
 void TLaraHit::Print(Option_t *opt) const {

@@ -344,11 +344,15 @@ void TChannel::SetTimeCoeff(std::vector<double> coeff, double timestamp) {
 
 
 double TChannel::CalTime(int time, double timestamp) const {
-  return Calibrate(time, GetTimeCoeff(timestamp));
+  //std::cout << GetName() << ":  time in  "<< time << std::endl;
+  time = Calibrate(time, GetTimeCoeff(timestamp));
+  //std::cout << GetName() << ":  time out " << time << std::endl;
+  return time;
 }
 
 double TChannel::CalTime(double time, double timestamp) const {
-  return Calibrate(time, GetTimeCoeff(timestamp));
+  time=Calibrate(time, GetTimeCoeff(timestamp));
+  return time;
 }
 
 void TChannel::ClearEfficiencyCoeff() {

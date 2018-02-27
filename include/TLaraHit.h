@@ -22,6 +22,10 @@ public:
   double GetBGOTime() const      { return fBGOTime; }
   void   SetBGOTime(double time) { fBGOTime = time; }
 
+  bool IsGood() const { if(Time()<4000 && Charge()>10) return true; return false; }
+  bool IsBGOGood() const { if(GetBGOTime()>1 && GetBGOTime()<4000) return true; return false; }
+ 
+
 private:
   //int   fChannel;
 

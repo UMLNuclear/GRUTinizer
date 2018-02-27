@@ -51,10 +51,11 @@ void MakeHistograms(TRuntimeObjects& obj) {
 
       obj.FillHistogram("time_singles",Form("tdc%02i",hit.Channel()),4096,0,4096,hit.Time());
       obj.FillHistogram("time_singles",Form("bgo%02i",hit.Channel()),4096,0,4096,hit.GetBGOTime());
-
-      obj.FillHistogram("deltas",Form("GeBGOdelta%i",hit.Channel()),1000,-3000,3000,hit.Time()-hit.GetBGOTime());           
-
-      obj.FillHistogram("GeBGOdelta",1000,-3000,3000,hit.Time()-hit.GetBGOTime() + GValue::Value(Form("bgoffset_%i",hit.Channel()))); //aligned GeBGOdelta plot
+      
+      if(hit.GetBGOTime()<4000){
+	obj.FillHistogram("deltas",Form("GeBGOdelta%i",hit.Channel()),1000,-3000,3000,hit.Time()-hit.GetBGOTime());           
+	obj.FillHistogram("GeBGOdelta",1000,-3000,3000,hit.Time()-hit.GetBGOTime() + GValue::Value(Form("bgoffset_%i",hit.Channel()))); //aligned GeBGOdelta 
+      }
 
       if(std::abs( hit.Time()-hit.GetBGOTime() + GValue::Value(Form("bgoffset_%i",hit.Channel())) ) > BGOGeWindow){ 
 	obj.FillHistogram("supression_singles",Form("adc%02i",hit.Channel()),4096,0,4096,hit.Charge());
