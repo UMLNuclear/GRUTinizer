@@ -71,6 +71,16 @@ bool TBuildingLoop::CheckBuildWindow(TRawEvent *event) {
     return false;
   }
 
+  //std::cout << build_window << std::endl;
+  //if build window is negative, force the RawEvent to be a complete event
+  if(build_window<0) {
+    //event->Print();
+    output_queue->Push(next_event);
+    next_event.clear();
+    event_start = timestamp;
+    return true;
+  }
+
   if(timestamp > event_start + build_window ||
      timestamp < event_start - build_window) {
     output_queue->Push(next_event);

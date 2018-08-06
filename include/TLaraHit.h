@@ -24,14 +24,21 @@ public:
 
   bool IsGood() const { if(Time()<4000 && Charge()>10) return true; return false; }
   bool IsBGOGood() const { if(GetBGOTime()>1 && GetBGOTime()<4000) return true; return false; }
- 
+  bool HasBGO()    const { return fBGOCharge>150; }
+
+  void SetBGOCharge(int chg) { fBGOCharge=chg;    }
+  int  GetBGOCharge() const  { return fBGOCharge; }
+
 
 private:
   //int   fChannel;
 
-  double fBGOTime;
+  //double fBGOTime;
+  int  fBGOTime;
+  int  fBGOCharge;
 
-  ClassDef(TLaraHit,22)
+
+  ClassDef(TLaraHit,24)
 };
 
 #endif /* _TLARAHIT_H_ */

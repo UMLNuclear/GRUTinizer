@@ -22,7 +22,8 @@ public:
   virtual TLaraHit     *FindHit(int ChannelNumber) {
     for(size_t x=0;x<lara_hits.size();x++) {
       if(lara_hits.at(x).Channel()==ChannelNumber) {
-        return &lara_hits[x];
+        //return &lara_hits[x];
+        return lara_hits.data()+x;
       }  
     }
     return 0;

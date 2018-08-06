@@ -61,14 +61,15 @@ TDetectorHit& TLara::GetHit(int i){
 
 void TLara::Print(Option_t *opt) const {
   printf("TLara det @ ts: %lu\n",Timestamp());
-  printf("\tname\tchg\ttime\tbgo\n");
+  printf("\tname\taddr\tchg\ttime\tbgo\n");
+  TString sopt(opt);
   for(int i=0;i<Size();i++) {
     TLaraHit hit = GetLaraHit(i);
-    if(opt=="hex") {
-      printf("\t%s\t0x%04x\t0x%04x\t0x%04x\n",hit.GetName(),
-          (unsigned short)hit.Charge(),(unsigned short)hit.Time(),(unsigned short)hit.GetBGOTime());
+    if(sopt.Contains("hex")) {
+      printf("\t%s\t0x%08x\t0x%04x\t0x%04x\t0x%04x\n",hit.GetName(),hit.Address(),
+          hit.Charge(),hit.Time(),hit.GetBGOTime());
     } else {
-      printf("\t%s\t%i\t\t%i\t%i\n",hit.GetName(),hit.Charge(),hit.Time(),hit.GetBGOTime());
+      printf("\t%s\t0x%08x\t%i\t%i\t%i\n",hit.GetName(),hit.Address(),hit.Charge(),hit.Time(),hit.GetBGOTime());
     }
   }
   printf("---------------------------------\n\n\n");
@@ -98,12 +99,34 @@ int TLara::Build_From(TNSCLEvent &event){
   //printf("nadc = %i  | 0x%04x\n",nadc,adchit);
   for(int i=0;i<nadc;i++)  {
     unsigned short datum = *((unsigned short*)data); data +=2;
-    //printf("adc[%i] =\t%i\n",(datum&0xf000)>>12,(datum&0x0fff));
-    TLaraHit hit;
-    hit.SetAddress(0x07000000 + ((datum&0xf000)>>12));
-    hit.SetCharge((datum&0x0fff));
-    InsertHit(hit);
+    int chan=-1;
+    bool is_bgo=false;
+    //std::cout << "datem&0xf00 = " << ((datum&0xf000)>>12) << std::endl;
+    if( ((datum&0xf000)>>12) >5) {
+      chan = ((datum&0xf000)>>12)-6; 
+      is_bgo=true;
+    } else {
+      chan = ((datum&0xf000)>>12); 
+    }
+
+    
+    if(!FindHit(chan)) {
+      TLaraHit hit;
+      hit.SetAddress(0x07000000 + chan);
+      if(is_bgo)  hit.SetBGOCharge((datum&0x0fff));
+      else        hit.SetCharge((datum&0x0fff));
+      //printf("[made]  ");hit.Print();
+      InsertHit(hit);
+    } else { 
+      TLaraHit *hit = FindHit(chan);
+      if(is_bgo)  hit->SetBGOCharge((datum&0x0fff));
+      else        hit->SetCharge((datum&0x0fff));
+      //printf("[found] ");hit->Print();
+    }
+    //fflush(stdout);
+
   }
+  //std::cout << std::endl;
   unsigned short tdcid  = *((short*)data); data+=sizeof(unsigned short);
   unsigned short tdchit = *((short*)data); data+=sizeof(unsigned short);
   n = tdchit;

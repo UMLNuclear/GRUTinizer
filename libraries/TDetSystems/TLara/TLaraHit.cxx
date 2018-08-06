@@ -3,7 +3,7 @@
 #include "TRandom.h"
 
 
-TLaraHit::TLaraHit():fBGOTime(-1) {
+TLaraHit::TLaraHit():fBGOTime(-1),fBGOCharge(-1) {
   Clear();
 }
 
@@ -15,7 +15,9 @@ TLaraHit::TLaraHit(const TDetectorHit &hit) {
 
 void TLaraHit::Copy(TObject& obj) const {
   TDetectorHit::Copy(obj);
-  TLaraHit& hit = (TLaraHit&)obj;
+  //TLaraHit& hit = (TLaraHit&)obj;
+  ((TLaraHit&)obj).fBGOTime = fBGOTime;
+  ((TLaraHit&)obj).fBGOCharge = fBGOCharge;
 }
 
 void TLaraHit::Clear(Option_t* opt) {
@@ -26,6 +28,8 @@ void TLaraHit::Clear(Option_t* opt) {
 void TLaraHit::Print(Option_t *opt) const {
   //printf("LaBrHit[%i]:   chg[%04i] -> %.02f  |  time[%04i] -> %.02f \n",
   //        fChannel,Charge(),GetEnergy(),Time(),GetTime());
+      printf("[%s]\t 0x%08x  HPGe[0x%08x 0x%04x]\tBGO[0x%04x 0x%04x]\n",GetName(),Address(),
+                    Charge(),Time(),GetBGOCharge(),GetBGOTime());
 }
 
 

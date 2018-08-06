@@ -1,24 +1,23 @@
-
 Lara0 {
   Address: 0x7000000
-  EnergyCoeff: -5.59758 0.513128
-  TIMECoeff:  110.5000  1.0
+  EnergyCoeff: -0.0309939 0.524009
+  TIMECoeff: 
 }
 
 Lara1 {
   Address: 0x7000001
-  EnergyCoeff:  -4.87187 0.507933
-  TIMECoeff:  113.169  1.0 
+  EnergyCoeff: -0.0366812 0.534292
+  TIMECoeff:   
 }
 
 Lara2 {
   Address: 0x7000002
-  EnergyCoeff:	-3.08151 0.501967
-  TIMECoeff:   99.7986  1.0 
+  EnergyCoeff: -1.94585 0.529803
+  TIMECoeff:   
 }
 
 Lara3 {
   Address: 0x7000003
-  EnergyCoeff: -4.7778 0.506134
-  TIMECoeff:   66.2486  1.0
+  EnergyCoeff: 
+  TIMECoeff:   
 }
