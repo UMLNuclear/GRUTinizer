@@ -41,8 +41,7 @@ public:
   virtual void Reset(Option_t *opt="");
   virtual void SetBinsLength(int n=-1);
 
-
-  //Int_t Write(const char *name="",Int_t option=0,Int_t bufsize=0) const;  
+  Int_t Write(const char *name="",Int_t option=0,Int_t bufsize=0);  
 
 protected:
   virtual double RetrieveBinContent(int bin) const { return double (fArray[bin]); }

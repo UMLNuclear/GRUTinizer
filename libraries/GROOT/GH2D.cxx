@@ -261,7 +261,25 @@ void GH2D::Streamer(TBuffer &b) {
 */
 
 
-//Int_t GH2D::Write(const char *name,Int_t option,Int_t bufsize) const {
+Int_t GH2D::Write(const char *name,Int_t option,Int_t bufsize)  {
+  //hist.Copy(*this);
+  std::string hname = this->GetName();
+  std::string temp_name = Form("__%s_temp__",this->GetName());
+  this->SetName(temp_name.c_str());
+  TH2D hist(hname.c_str(),this->GetTitle(),this->GetNbinsX(),this->GetXaxis()->GetBinLowEdge(1),this->GetXaxis()->GetBinUpEdge(this->GetNbinsX()),
+                                          this->GetNbinsY(),this->GetYaxis()->GetBinLowEdge(1),this->GetYaxis()->GetBinUpEdge(this->GetNbinsX()));
+  for(int i=0;i<=this->GetNbinsX()+1;i++) {
+    for(int j=0;j<=this->GetNbinsX()+1;j++) {
+      hist.SetBinContent(i,j,this->GetBinContent(i,j));
+    }
+  }
+  hist.SetEntries(this->GetEntries()); 
+
+  int result = hist.Write();
+  hist.Delete();
+  this->SetName(hname.c_str());
+  return result;
+}
 //  TH2D hist;
   //hist.Copy(*this);
 //  this->Copy(hist);

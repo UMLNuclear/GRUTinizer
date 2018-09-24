@@ -23,7 +23,7 @@ class GH1D : public GH1, public TArrayD {
     virtual void Reset(Option_t *opt="");
     virtual void SetBinsLength(int n=-1);
 
-    //Int_t Write(const char *name="",Int_t option=0,Int_t bufsize=0) const;  
+    Int_t Write(const char *name="",Int_t option=0,Int_t bufsize=0);  
 
 
   protected:

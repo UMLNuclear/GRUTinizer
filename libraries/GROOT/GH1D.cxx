@@ -147,13 +147,22 @@ GH1D operator-(const GH1D &h1,const GH1D &h2) {
 
 
 
-//Int_t GH1D::Write(const char *name,Int_t option,Int_t bufsize) const {
-//  TH1D hist;
+Int_t GH1D::Write(const char *name,Int_t option,Int_t bufsize)  {
   //hist.Copy(*this);
-//  this->Copy(hist);
-//  hist.SetNameTitle(this->GetName(),this->GetTitle());
-//  return hist.Write();
-//}
+  std::string hname = this->GetName();
+  std::string temp_name = Form("__%s_temp__",this->GetName());
+  this->SetName(temp_name.c_str());
+  TH1D hist(hname.c_str(),this->GetTitle(),this->GetNbinsX(),this->GetXaxis()->GetBinLowEdge(1),this->GetXaxis()->GetBinUpEdge(this->GetNbinsX()));
+  for(int i=0;i<=this->GetNbinsX()+1;i++) {
+      hist.SetBinContent(i,this->GetBinContent(i));
+  }
+  hist.SetEntries(this->GetEntries()); 
+
+  int result = hist.Write();
+  hist.Delete();
+  this->SetName(hname.c_str());
+  return result;
+}
 
 
 
