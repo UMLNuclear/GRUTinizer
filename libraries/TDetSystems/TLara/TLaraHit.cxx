@@ -14,6 +14,9 @@ TLaraHit::TLaraHit(const TDetectorHit &hit) {
 }
 
 void TLaraHit::Copy(TObject& obj) const {
+  //Clear();
+  //fBGOTime=0;
+  //fBGOCharge=0;
   TDetectorHit::Copy(obj);
   //TLaraHit& hit = (TLaraHit&)obj;
   ((TLaraHit&)obj).fBGOTime = fBGOTime;
@@ -23,6 +26,7 @@ void TLaraHit::Copy(TObject& obj) const {
 void TLaraHit::Clear(Option_t* opt) {
   TDetectorHit::Clear(opt);
   fBGOTime=-1;
+  fBGOCharge=-1;
 }
 
 void TLaraHit::Print(Option_t *opt) const {

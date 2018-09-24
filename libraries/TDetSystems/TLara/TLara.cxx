@@ -23,12 +23,14 @@ void TLara::Copy(TObject& obj) const {
 
 void TLara::Clear(Option_t* opt){
   TDetector::Clear(opt);
-
+  //std::cout << __PRETTY_FUNCTION__ << std::endl;
   lara_hits.clear();
 }
 
 
 int TLara::BuildHits(std::vector<TRawEvent>& raw_data){
+  //std::cout << __PRETTY_FUNCTION__ << std::endl;
+  Clear();
   for(auto& event : raw_data){
     TNSCLEvent& nscl = (TNSCLEvent&)event;
     SetTimestamp(nscl.GetTimestamp());
@@ -79,6 +81,11 @@ void TLara::Print(Option_t *opt) const {
 
 // This is where the unpacking happens:
 int TLara::Build_From(TNSCLEvent &event){
+  Clear();
+  //std::cout << __PRETTY_FUNCTION__ << std::endl;
+  //printf("\n\n\n\n");
+  //Print("hex");
+
   //event.Print("all");
   Int_t PayloadSize = event.GetPayloadSize();
   if(PayloadSize == 1)
@@ -110,19 +117,19 @@ int TLara::Build_From(TNSCLEvent &event){
     }
 
     
-    if(!FindHit(chan)) {
+  //  if(!FindHit(chan)) {
       TLaraHit hit;
       hit.SetAddress(0x07000000 + chan);
       if(is_bgo)  hit.SetBGOCharge((datum&0x0fff));
       else        hit.SetCharge((datum&0x0fff));
       //printf("[made]  ");hit.Print();
       InsertHit(hit);
-    } else { 
-      TLaraHit *hit = FindHit(chan);
-      if(is_bgo)  hit->SetBGOCharge((datum&0x0fff));
-      else        hit->SetCharge((datum&0x0fff));
-      //printf("[found] ");hit->Print();
-    }
+  //  } else { 
+  //    TLaraHit *hit = FindHit(chan);
+  //    if(is_bgo)  hit->SetBGOCharge((datum&0x0fff));
+  //    else        hit->SetCharge((datum&0x0fff));
+  //    printf("[found] ");hit->Print();
+  //  }
     //fflush(stdout);
 
   }
