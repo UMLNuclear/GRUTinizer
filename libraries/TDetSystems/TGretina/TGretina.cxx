@@ -17,6 +17,11 @@
 
 #include "TGEBEvent.h"
 
+#ifdef __APPLE__
+#  define off64_t off_t
+#  define fopen64 fopen
+#endif
+
 TGretina::TGretina(){
   //gretina_hits = new TClonesArray("TGretinaHit");
   //addback_hits = new TClonesArray("TGretinaHit");

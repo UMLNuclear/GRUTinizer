@@ -3,20 +3,20 @@
 #include "TClass.h"
 
 #include "TBank29.h"
-#include "TCaesar.h"
+//#include "TCaesar.h"
 #include "TGretina.h"
 #include "TGretSim.h"
-#include "TJanus.h"
+//#include "TJanus.h"
 #include "TMode3.h"
 #include "TNSCLScalers.h"
-#include "TPhosWall.h"
+//#include "TPhosWall.h"
 #include "TS800.h"
 #include "TS800Sim.h"
 #include "TS800Scaler.h"
-#include "TSega.h"
-#include "TFastScint.h"
-#include "TLenda.h"
-#include "TFSU.h"
+//#include "TSega.h"
+//#include "TFastScint.h"
+//#include "TLenda.h"
+//#include "TFSU.h"
 
 TUnpackedEvent::TUnpackedEvent() { }
 
@@ -59,7 +59,11 @@ void TUnpackedEvent::Build() {
     case kDetectorSystems::BANK29:
       GetDetector<TBank29>(true)->Build(raw_data);
       break;
-
+    
+    case kDetectorSystems::NSCLSCALERS:
+      GetDetector<TNSCLScalers>(true)->Build(raw_data);
+      break;
+/*
     case kDetectorSystems::SEGA:
       GetDetector<TSega>(true)->Build(raw_data);
       break;
@@ -80,9 +84,6 @@ void TUnpackedEvent::Build() {
       GetDetector<TPhosWall>(true)->Build(raw_data);
       break;
 
-    case kDetectorSystems::NSCLSCALERS:
-      GetDetector<TNSCLScalers>(true)->Build(raw_data);
-      break;
     
     case kDetectorSystems::LENDA:
       GetDetector<TLenda>(true)->Build(raw_data);
@@ -90,7 +91,7 @@ void TUnpackedEvent::Build() {
 
     case kDetectorSystems::FSU:
       GetDetector<TFSU>(true)->Build(raw_data);
-
+*/
     default:
       break;
     }
