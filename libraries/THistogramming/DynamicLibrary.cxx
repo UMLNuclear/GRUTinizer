@@ -13,7 +13,7 @@
 #include <unistd.h>
 
 //#include "RuntimeExceptions.h"
-#include "FullPath.h"
+//#include "FullPath.h"
 
 namespace {
   int incremental_id() {
@@ -80,3 +80,17 @@ void DynamicLibrary::swap(DynamicLibrary& other){
 void* DynamicLibrary::GetSymbol(const char* symbol) {
   return dlsym(library, symbol);
 }
+
+
+std::string DynamicLibrary::full_path(const std::string& path){
+  char buff[PATH_MAX+1];
+  char* success = realpath(path.c_str(), buff);
+  if(success){
+    return buff;
+  } else {
+    // TODO: Give some sort of error message.
+    return "";
+  }
+}
+
+

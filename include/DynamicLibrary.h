@@ -56,6 +56,8 @@ public:
 private:
   void swap(DynamicLibrary& other);
 
+  std::string full_path(const std::string& path);
+
   void* library;
   std::string libname;
   std::string tempname;
