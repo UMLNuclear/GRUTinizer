@@ -3,6 +3,7 @@
 
 #include <string>
 #include <queue>
+#include <iostream>
 
 #ifndef __CINT__
 #include <condition_variable>
@@ -98,7 +99,9 @@ private:
 
 class TGRUTInterruptHandler : public TSignalHandler {
 public:
-  TGRUTInterruptHandler():TSignalHandler(ESignals::kSigInterrupt,false) { }
+  TGRUTInterruptHandler():TSignalHandler(ESignals::kSigInterrupt,false) { 
+    std::cout << "new handler has been created!  " << ESignals::kSigInterrupt  << std::endl;
+  }
   bool Notify();
   ClassDef(TGRUTInterruptHandler,0)
 };

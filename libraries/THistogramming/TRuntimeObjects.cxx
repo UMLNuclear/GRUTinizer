@@ -26,8 +26,8 @@ TRuntimeObjects::TRuntimeObjects(TUnpackedEvent *detectors, TList* objects, TLis
     cut_files(cut_files),
     directory(directory) {
   SetName(name);
-//  gROOT->GetListOfCleanups()->Add(objects);
-//  gROOT->GetListOfCleanups()->Add(gates);
+  //gROOT->GetListOfCleanups()->Add(objects);
+  //gROOT->GetListOfCleanups()->Add(gates);
 
   fRuntimeMap.insert(std::make_pair(name,this));
 }
@@ -39,10 +39,16 @@ TRuntimeObjects::TRuntimeObjects(TList* objects, TList *gates,
     cut_files(cut_files),
     directory(directory) {
   SetName(name);
-//  gROOT->GetListOfCleanups()->Add(objects);
-//  gROOT->GetListOfCleanups()->Add(gates);
+  //gROOT->GetListOfCleanups()->Add(objects);
+  //gROOT->GetListOfCleanups()->Add(gates);
   fRuntimeMap.insert(std::make_pair(name,this));
 }
+
+TRuntimeObjects::~TRuntimeObjects() {
+  //if(objects) gROOT->GetListOfCleanups()->Add(objects);
+  //if(gates)   gROOT->GetListOfCleanups()->Add(gates);
+}
+
 
 
 GH1* TRuntimeObjects::FillHistogram(const char* name,

@@ -21,6 +21,7 @@ class TCompiledHistograms : public TObject {
 public:
   TCompiledHistograms();
   TCompiledHistograms(std::string libname);
+  ~TCompiledHistograms();
 
   void Load(std::string libname);
   void Fill(TUnpackedEvent& detectors);

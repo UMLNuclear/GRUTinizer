@@ -66,6 +66,12 @@ void TCompiledHistograms::ClearHistograms() {
   std::cout << "ended " << std::endl;
 }
 
+TCompiledHistograms::~TCompiledHistograms() {
+  //if(obj.GetObjectsPtr()) gROOT->GetListOfCleanups()->Add(obj.GetObjectsPtr());
+  //if(obj.GetGatesPtr())   gROOT->GetListOfCleanups()->Add(obj.GetGatesPtr());
+}
+
+
 time_t TCompiledHistograms::get_timestamp() {
   struct stat buf;
   stat(libname.c_str(), &buf);

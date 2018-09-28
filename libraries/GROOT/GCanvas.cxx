@@ -1355,7 +1355,7 @@ bool GCanvas::Process2DKeyboardPress(Event_t *event,UInt_t *keysym) {
             toremove.push_back(mylist->At(i)->GetName());
           }
         }
-        for(int i=0;i<toremove.size();i++) {
+        for(size_t i=0;i<toremove.size();i++) {
           mylist->Remove(mylist->FindObject(toremove.at(i).c_str()));
         }
       }

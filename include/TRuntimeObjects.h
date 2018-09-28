@@ -40,6 +40,8 @@ public:
                   TDirectory* directory=NULL,
                   const char *name="default");
 
+  ~TRuntimeObjects();
+
   /// Returns a pointer to the detector of type T
   template<typename T>
   T* GetDetector(){

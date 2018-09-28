@@ -74,7 +74,8 @@ TGRUTint::TGRUTint(int argc, char **argv,void *options, Int_t numOptions, Bool_t
   fDataLoop = 0;
   fChainLoop = 0;
 
-  SetPrompt("GRizer [%d] ");
+  //SetPrompt("GRizer [%d] ");
+  SetPrompt("GRETA [%d] ");
   TGRUTOptions::Get(argc, argv);
 }
 
