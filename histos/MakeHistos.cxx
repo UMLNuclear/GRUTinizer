@@ -76,6 +76,7 @@ void MakeHistograms(TRuntimeObjects& obj) {
       TGretinaHit hit = gretina->GetGretinaHit(i);
       obj.FillHistogram("summary",2000,0,2000,hit.GetCoreEnergy(),
                                   200,0,200,hit.GetCrystalId());
+      obj.FillHistogram("sum",4000,0,4000,hit.GetCoreEnergy());
     }
   }
 

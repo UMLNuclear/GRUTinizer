@@ -9,6 +9,7 @@
 #include "GH2.h"
 #include "TDirectoryFile.h"
 #include "TProfile.h"
+#include "TROOT.h"
 
 #include "GH1D.h"
 #include "GH2D.h"
@@ -25,6 +26,9 @@ TRuntimeObjects::TRuntimeObjects(TUnpackedEvent *detectors, TList* objects, TLis
     cut_files(cut_files),
     directory(directory) {
   SetName(name);
+//  gROOT->GetListOfCleanups()->Add(objects);
+//  gROOT->GetListOfCleanups()->Add(gates);
+
   fRuntimeMap.insert(std::make_pair(name,this));
 }
 
@@ -35,6 +39,8 @@ TRuntimeObjects::TRuntimeObjects(TList* objects, TList *gates,
     cut_files(cut_files),
     directory(directory) {
   SetName(name);
+//  gROOT->GetListOfCleanups()->Add(objects);
+//  gROOT->GetListOfCleanups()->Add(gates);
   fRuntimeMap.insert(std::make_pair(name,this));
 }
 

@@ -43,6 +43,7 @@ void TBuildingLoop::ClearQueue() {
 bool TBuildingLoop::Iteration(){
   TRawEvent event;
 
+
   int error = input_queue->Pop(event);
   if(error<0) {
     if(input_queue->IsFinished()){

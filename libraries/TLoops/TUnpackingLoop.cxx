@@ -37,6 +37,10 @@ TUnpackingLoop::TUnpackingLoop(std::string name)
 TUnpackingLoop::~TUnpackingLoop() { }
 
 bool TUnpackingLoop::Iteration(){
+
+  //static int dummy=0;
+  //std::cout << dummy++ << "\t" <<  __PRETTY_FUNCTION__ << std::endl;
+
   std::vector<TRawEvent> event;
 
   int error = input_queue->Pop(event);

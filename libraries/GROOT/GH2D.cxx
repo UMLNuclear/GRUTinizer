@@ -276,6 +276,7 @@ Int_t GH2D::Write(const char *name,Int_t option,Int_t bufsize)  {
   hist.SetEntries(this->GetEntries()); 
 
   int result = hist.Write();
+  hist.SetDirectory(0);
   hist.Delete();
   this->SetName(hname.c_str());
   return result;

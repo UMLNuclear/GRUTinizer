@@ -81,6 +81,10 @@ void* DynamicLibrary::GetSymbol(const char* symbol) {
   return dlsym(library, symbol);
 }
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 
 std::string DynamicLibrary::full_path(const std::string& path){
   char buff[PATH_MAX+1];
