@@ -34,6 +34,7 @@ public:
   Int_t    GetAbsSegId()  const { return GetCrystal()*40 + GetSegmentId() ; }
   Int_t    GetCrystalId() const { return GetHole()*4 + GetCrystal(); }
   const std::vector<Short_t>& GetWave() const { return waveform; }
+  int   GetWaveSize() const {return waveform.size(); }
 
   Long_t   GetLed()       const { return led; }
   Long_t   GetCfd()       const { return cfd; }

@@ -28,6 +28,8 @@ public:
   void PrintHit(int i){ mode3_hits.at(i).Print(); }
 
   void Sort() { std::sort(mode3_hits.begin(),mode3_hits.end()); }
+  void Draw(Option_t *opt=""); 
+
 
 private:
   virtual int BuildHits(std::vector<TRawEvent>& raw_data);

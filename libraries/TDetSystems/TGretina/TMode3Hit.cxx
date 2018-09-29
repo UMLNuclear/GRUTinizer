@@ -120,7 +120,8 @@ void TMode3Hit::Draw(Option_t *opt)  {
   } else {
     gPad->Clear();
   }
-  GH1D wave("wave","wave",(int)waveform.size(),0,(double)waveform.size());
+  GH1D wave(Form("wave_%04i",GetAbsSegId()),Form("wave_%04i",GetAbsSegId()),
+                (int)waveform.size(),0,(double)waveform.size());
   for(unsigned int x=0;x<waveform.size();x++) 
     wave.Fill(x,waveform.at(x));
   wave.DrawCopy();
