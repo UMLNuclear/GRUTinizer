@@ -234,6 +234,57 @@ typedef struct { // Decomposed GRETINA Data
 
 friend std::ostream& operator<<(std::ostream& os, const GEBBankType1 &bank);
 
+typedef struct {
+  Float_t esum;
+  Int_t   ndet;
+  Float_t fom;
+  Int_t   tracked;
+  Long_t  timestamp;
+  Float_t x0,y0,z0,e0;
+  Float_t x1,y1,z1,e1;
+  //Short_t fhcrID;
+}__attribute__((__packed__)) TrackedGammaRay;
+
+friend std::ostream& operator<<(std::ostream& os, const TrackedGammaRay &gam);
+
+typedef struct {
+  Int_t ngammas;
+  //Int_t unknown;
+  TrackedGammaRay gammas[MAX_INTPTS];
+}__attribute__((__packed__)) GEBBankType3;
+
+friend std::ostream& operator<<(std::ostream& os, const GEBBankType3 &bank);
+
+/*
+typedef struct { // HPGe Segment Hit Type 3;
+   Float_t     xx;
+   Float_t     yy;
+   Float_t     zz;
+   Float_t     edet;        //fraction of the energy
+   Int_t       order;
+   Long_t      timestamp;
+   Int_t       shellHitPos;
+   Int_t       detno;
+}__attribute__((__packed__)) GEBTrackedInteractionPoint;
+
+friend std::ostream& operator<<(std::ostream& os, const GEBTrackedInteractionPoint &fSeg);
+
+typedef struct { // Tracked GRETINA Data
+  Int_t   vaild;
+  Int_t   ndet;
+  Int_t   tracked;
+  Float_t fom;
+  Float_t esum;
+  Int_t   trackno;
+  Int_t   bestPermutation;
+  Int_t   processed;
+  GEBTrackedInteractionPoint intpts[MAX_INTPTS];
+}__attribute__((__packed__)) GEBBankType3;
+
+friend std::ostream& operator<<(std::ostream& os, const GEBBankType3 &bank);
+*/
+
+
 static UShort_t SwapShort(UShort_t datum);
 
 struct GEBMode3Head {
