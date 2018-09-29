@@ -73,6 +73,8 @@ public:
   double GetLastXlow()  const { return xl_last;}
   double GetLastXhigh() const { return xh_last;}
 
+  Int_t Write(const char *name="",Int_t option=0,Int_t bufsize=0);  
+
 private:
   TRef parent;
   int projection_axis;
