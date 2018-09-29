@@ -22,6 +22,7 @@ public:
   virtual UInt_t Size() const { return gretsim_hits.size(); }
 
   virtual void          InsertHit(const TDetectorHit& hit);
+  virtual void          Sort() { }
   virtual TDetectorHit& GetHit(int i)            { return gretsim_hits.at(i); }
 
   const TGretSimHit& GetGretinaSimHit(int i) { return gretsim_hits.at(i); }

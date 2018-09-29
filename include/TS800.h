@@ -20,6 +20,7 @@ public:
   //////////////////////////////////////////////
   virtual void InsertHit(const TDetectorHit&);
   virtual TDetectorHit& GetHit(int i);
+  virtual void          Sort() { }
   /////////////////////////////////////////////
 
   void SetEventCounter(Long_t event) { fEventCounter = event; }

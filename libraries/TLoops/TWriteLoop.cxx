@@ -86,6 +86,7 @@ bool TWriteLoop::Iteration() {
   input_queue->Pop(event);
 
   if(event) {
+    event->Sort();
     WriteEvent(*event);
     output_queue->Push(event);
     return true;

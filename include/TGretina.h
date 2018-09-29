@@ -60,6 +60,7 @@ public:
 #endif
   const std::vector<TGretinaHit> &GetAllHits() const { return gretina_hits; }
 
+  void  Sort() { }
   void  SortHits();
 
 private:

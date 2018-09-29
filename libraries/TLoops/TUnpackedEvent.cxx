@@ -26,6 +26,13 @@ TUnpackedEvent::~TUnpackedEvent() {
   }
 }
 
+void TUnpackedEvent::Sort() {
+  std::vector<TDetector*>::iterator det;
+  for(det=detectors.begin();det!=detectors.end();det++) {
+    (*det)->Sort(); 
+  }
+}
+
 void TUnpackedEvent::Build() {
   for(auto& item : raw_data_map) {
     kDetectorSystems detector = item.first;

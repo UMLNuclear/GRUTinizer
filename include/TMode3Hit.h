@@ -56,6 +56,11 @@ public:
 
   void Draw(Option_t *opt="");
 
+  bool operator<(const TMode3Hit &rhs) const {
+    return GetAbsSegId() < rhs.GetAbsSegId();
+  }
+
+
 
 private:
   //virtual int BuildHits();

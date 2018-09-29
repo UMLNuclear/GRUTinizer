@@ -29,6 +29,7 @@ public:
   int Build(std::vector<TRawEvent>& raw_data);
   virtual void InsertHit(const TDetectorHit&) = 0;
   virtual TDetectorHit& GetHit(int i)         = 0;
+  virtual void Sort() = 0;
 
   virtual unsigned int  Size() const { return fSize; }
 
@@ -45,7 +46,6 @@ public:
   
   void AddRawData(TRawEvent *event) { fRawData.push_back(event); }
   int Build(); // build from transient data member.
-
 
 protected:
   int fSize;

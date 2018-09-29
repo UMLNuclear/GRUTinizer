@@ -21,6 +21,7 @@ public:
   virtual void Print(Option_t *opt = "") const;
 
   virtual void          InsertHit(const TDetectorHit& hit);
+  virtual void          Sort() { }
   virtual TDetectorHit& GetHit(int i)        { return channels.at(i); }
   virtual TMode3Hit&    GetMode3Hit(int i)   { return channels.at(i); }
 

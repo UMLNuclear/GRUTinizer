@@ -30,6 +30,8 @@ public:
 
   int Size() { return detectors.size(); }
 
+  void Sort();
+
   std::map<kDetectorSystems, std::vector<TRawEvent> >& GetRawData() { return raw_data_map; }
 
 private:
