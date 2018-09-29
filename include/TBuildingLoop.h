@@ -5,6 +5,8 @@
 #include <memory>
 #endif
 
+#include <ctime>
+
 #include "StoppableThread.h"
 #include "ThreadsafeQueue.h"
 #include "TRawEvent.h"

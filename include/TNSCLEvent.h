@@ -1,8 +1,11 @@
 #ifndef _TNSCLEVENT_H_
 #define _TNSCLEVENT_H_
 
+#include <ctime>
+
 #include "TRawEvent.h"
 #include "TSmartBuffer.h"
+
 
 enum kNSCLEventType {
   BEGIN_RUN            = 1,    // 0x0001
