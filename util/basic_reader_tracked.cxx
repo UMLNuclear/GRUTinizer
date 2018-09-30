@@ -32,28 +32,33 @@ int main(int argc, char **argv) {
     print = atoi(argv[2]);
   printf("printing %i fragment.\n",print);
 
-  bool foundone =false;
 
   int count1 = 0;
   int count3 = 0;
-  int stop  = 10;
-  bool exitloop=false;
   while(infile.Read(&event)>0) {
     //printf("I AM HERE\n");
     TSmartBuffer buf = event.GetPayloadBuffer();
     switch(event.GetEventType()) {
       case 1: 
         {
-          TRawEvent::GEBBankType1 raw = *(const TRawEvent::GEBBankType1*)buf.GetData();
-          std::cout << raw << std::endl;
+          //TRawEvent::GEBBankType1 raw = *(const TRawEvent::GEBBankType1*)buf.GetData();
+          //std::cout << raw << std::endl;
           count1++;
         }
         break;
       case 3:
         {
-          const char *data = buf.GetData()+4;
+          const char *data = buf.GetData();
           TRawEvent::GEBBankType3 raw = *(const TRawEvent::GEBBankType3*)data;
           std::cout << raw << std::endl;
+          //event.Print();
+          //std::cout << event.GetBodySize() << std::endl;
+          //int size = event.GetBodySize()-8;
+          //for(int i=0;i<size;i+=4) {
+          //  std::cout << i << "\t" <<*((int*)(buf.GetData()+(i))) << "\t" <<
+          //                           *((float*)(buf.GetData()+(i))) << std::endl;
+          //}
+          
           count3++;
         }
         break;

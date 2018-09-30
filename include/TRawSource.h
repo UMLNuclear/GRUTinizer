@@ -87,6 +87,7 @@ public:
   virtual std::string Status(bool long_description = false) const;
   virtual void Reset();
   virtual std::string SourceDescription(bool long_description=false) const {
+    (void)long_description;
     return fByteSource->SourceDescription();
   }
 

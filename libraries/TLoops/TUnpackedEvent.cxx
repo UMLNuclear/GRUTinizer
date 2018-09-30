@@ -7,6 +7,7 @@
 #include "TGretina.h"
 #include "TGretSim.h"
 //#include "TJanus.h"
+#include "TMode1.h"
 #include "TMode3.h"
 #include "TNSCLScalers.h"
 //#include "TPhosWall.h"

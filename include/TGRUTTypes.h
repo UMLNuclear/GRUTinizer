@@ -13,6 +13,7 @@ enum kDetectorSystems {
 
   GRETINA    = 1,
   MODE3      = 2,
+  MODE1      = 3,
   S800       = 5,
   S800SCALER = 10,
   BANK29     = 8,
@@ -41,6 +42,7 @@ enum kFileType {
   NSCL_EVT = 1,
   GRETINA_MODE2 = 2,
   GRETINA_MODE3 = 3,
+  GRETINA_MODE1 = 4,
   ROOT_DATA = 256,
   ROOT_MACRO = 257,
   CALIBRATED = 512,

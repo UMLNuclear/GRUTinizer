@@ -8,6 +8,7 @@
 //#include "TJanus.h"
 //#include "TJanusDDAS.h"
 //#include "TLenda.h"
+#include "TMode1.h"
 #include "TMode3.h"
 #include "TNSCLScalers.h"
 //#include "TPhosWall.h"
@@ -25,6 +26,7 @@ std::map<std::string, kDetectorSystems> detector_system_map{
   {"Gretina",         kDetectorSystems::GRETINA},
   {"Gretina_Sim",     kDetectorSystems::GRETINA_SIM},
   {"Bank29",          kDetectorSystems::BANK29},
+  {"Mode1",           kDetectorSystems::MODE1},
   {"Mode3",           kDetectorSystems::MODE3},
 //  {"Janus",           kDetectorSystems::JANUS},
 //  {"Caesar",          kDetectorSystems::CAESAR},
@@ -51,6 +53,7 @@ std::map<std::string, kDetectorSystems> detector_system_map{
 // Adding a detector to this list allows grutinizer to unpack that detector type.
 std::map<kDetectorSystems, TDetectorFactoryBase*> detector_factory_map {
   {kDetectorSystems::GRETINA,     new TDetectorFactory<TGretina>() },
+  {kDetectorSystems::MODE1,       new TDetectorFactory<TMode1>() },
   {kDetectorSystems::MODE3,       new TDetectorFactory<TMode3>() },
   {kDetectorSystems::S800,        new TDetectorFactory<TS800>() },
 //  {kDetectorSystems::S800SCALER,  new TDetectorFactory<TS800Scaler>() },

@@ -61,11 +61,13 @@ std::ostream& operator<<(std::ostream& os, const TRawEvent::TrackedGammaRay &gam
 std::ostream& operator<<(std::ostream& os, const TRawEvent::GEBBankType3 &bank) {
   os << "******** tracked data ********" << std::endl;
   os << "ngammas:  " << bank.ngammas << std::endl;
-  for(int x=0;x<bank.ngammas+1;x++) {
+  for(int x=0;x<bank.ngammas;x++) {
     os << "------------------------" << std::endl;
+    os << "ngammas: " << bank.ngammas << "  x: " << x << std::endl;
     os << bank.gammas[x];
   }
   os << "************************" << std::endl;
+  return os;
 }
 
 /*

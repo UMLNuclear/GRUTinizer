@@ -188,6 +188,9 @@ void TUnpackingLoop::HandleGEBData(TGEBEvent& event){
     case 2: // Gretina Mode3 data.
       HandleGEBMode3(event, kDetectorSystems::MODE3);
       break;
+    case 3: // Gretina Mode1 data.
+      fOutputEvent->AddRawData(event, kDetectorSystems::MODE1);
+      break;
     case 5: // S800 Mode2 equvilant.
       fOutputEvent->AddRawData(event, kDetectorSystems::S800);
       break;

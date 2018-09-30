@@ -249,7 +249,7 @@ friend std::ostream& operator<<(std::ostream& os, const TrackedGammaRay &gam);
 
 typedef struct {
   Int_t ngammas;
-  //Int_t unknown;
+  Int_t unknown;
   TrackedGammaRay gammas[MAX_INTPTS];
 }__attribute__((__packed__)) GEBBankType3;
 
