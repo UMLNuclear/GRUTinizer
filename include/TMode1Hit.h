@@ -43,8 +43,9 @@ public:
   //Float_t x1,y1,z1,e1;
   TVector3 fSecondInt;
   Float_t  fE1;
+  Int_t    fFHXId;
 
-  ClassDef(TMode1Hit,1);
+  ClassDef(TMode1Hit,2);
 };
 
 

@@ -51,6 +51,7 @@ int TMode1::BuildHits(std::vector<TRawEvent>& raw_data){
       hit.fE0      = raw.gammas[x].e0;
       hit.fSecondInt.SetXYZ(raw.gammas[x].x1,raw.gammas[x].y1,raw.gammas[x].z1);
       hit.fE1      = raw.gammas[x].e1;
+      //hit.fFHXId   = raw.fhcrID;
       InsertHit(hit);
     }
   }

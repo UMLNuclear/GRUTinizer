@@ -41,5 +41,6 @@ void TMode1Hit::Clear(Option_t *opt) {
   fE0 = sqrt(-1);      
   fSecondInt.Clear();
   fE1 = sqrt(-1);      
+  fFHXId = -1;
 }
 
