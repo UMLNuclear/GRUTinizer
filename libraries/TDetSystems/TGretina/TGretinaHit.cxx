@@ -41,7 +41,7 @@ TGretinaHit::~TGretinaHit(){ }
 void TGretinaHit::Copy(TObject &rhs) const {
   TDetectorHit::Copy(rhs);
   ((TGretinaHit&)rhs).fTimeStamp      = fTimeStamp;
-  ((TGretinaHit&)rhs).fWalkCorrection = fWalkCorrection;
+  ((TGretinaHit&)rhs).fT0 = fT0;
   ((TGretinaHit&)rhs).fAddress        = fAddress;
   ((TGretinaHit&)rhs).fPad            = fPad;
   ((TGretinaHit&)rhs).fCrystalId      = fCrystalId;
@@ -101,7 +101,7 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   Clear();
 
   fTimeStamp = raw.timestamp;
-  fWalkCorrection = raw.t0;
+  fT0 = raw.t0;
   fCrystalId = raw.crystal_id;
   fCoreEnergy = raw.tot_e;
 
@@ -172,6 +172,18 @@ TVector3 TGretinaHit::GetLocalPosition(int i) const {
     return TVector3(0,0,1);
   }
 }
+
+double TGretinaHit::GetDoppler(double beta,const TVector3 *vec) {
+  if(Size()<1)
+    return 0.0;
+  if(vec==0) {
+    vec = &BeamUnitVec;
+  }
+  double tmp = 0.0;
+  double gamma = 1/(sqrt(1-pow(beta,2)));
+  tmp = fCoreEnergy*gamma *(1 - beta*TMath::Cos(GetPosition().Angle(*vec)));
+  return tmp;
+} 
 
 double TGretinaHit::GetDoppler_dB(double beta, const TVector3 *vec,double Dta){
   if(Size()<1)
@@ -413,7 +425,7 @@ void TGretinaHit::Print(Option_t *opt) const {
   std::cout << "\tCrystalId:      \t" << GetCrystalId()                << std::endl;
 
   std::cout << "\tLocal Timestamp:\t" << fTimeStamp                   << std::endl;
-  std::cout << "\tCorrected time: \t" << fTimeStamp - fWalkCorrection << std::endl;
+  std::cout << "\tCorrected time: \t" << fTimeStamp - fT0 << std::endl;
   std::cout << "\tDecomp Energy:  \t" << fCoreEnergy                   << std::endl;
   if(!strcmp(opt,"all")) {
     for(int i=0;i<4;i++)
@@ -448,7 +460,7 @@ void TGretinaHit::Clear(Option_t *opt) {
   TDetectorHit::Clear(opt);
 
   fTimeStamp      = -1;
-  fWalkCorrection = sqrt(-1);
+  fT0 = sqrt(-1);
 
   fAddress        = -1;
   fCrystalId      = -1;
@@ -482,5 +494,12 @@ void TGretinaHit::Clear(Option_t *opt) {
   */
 }
 
-
+Int_t TGretinaHit::Compare(const TObject *obj) const { 
+    TGretinaHit *other = (TGretinaHit*)obj;
+    if(this->GetCoreEnergy()>other->GetCoreEnergy())
+      return -1;
+    else if(this->GetCoreEnergy()<other->GetCoreEnergy())
+      return 1;  //sort largest to smallest.
+    return 0;
+  }
 

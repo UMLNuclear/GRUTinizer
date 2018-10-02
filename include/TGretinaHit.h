@@ -30,7 +30,8 @@ public:
   void BuildFrom(TSmartBuffer& raw);
 
   Long_t   GetTimestamp()       const { return fTimeStamp; }
-  Double_t GetTime()            const { return (double)fTimeStamp - (double)fWalkCorrection; }
+  Double_t GetTime()            const { return (double)fTimeStamp - (double)fT0; }
+  Double_t GetT0()              const { return fT0; }
   Int_t    GetAddress()         const { return fAddress;        }
   Int_t    GetCrystalId()       const { return fCrystalId;      }
   Int_t    GetHoleNumber()      const { return fCrystalId/4-1;  }
@@ -39,6 +40,7 @@ public:
   Int_t    GetCoreCharge(int i) const { return fCoreCharge[i];  }
   Float_t  GetCoreEnergy(int i) const; // { return fCoreCharge[i];  }
   virtual Int_t Charge()        const { return fCoreCharge[3];  }
+  virtual Double_t GetEnergy()  const { return fCoreEnergy;     } 
 
   const char *GetName() const;
 
@@ -46,14 +48,7 @@ public:
 
   void  Print(Option_t *opt="") const;
   void  Clear(Option_t *opt="");
-  Int_t Compare(const TObject *obj) const { 
-    TGretinaHit *other = (TGretinaHit*)obj;
-    if(this->GetCoreEnergy()>other->GetCoreEnergy())
-      return -1;
-    else if(this->GetCoreEnergy()<other->GetCoreEnergy())
-      return 1;  //sort largest to smallest.
-    return 0;
-  }
+  Int_t Compare(const TObject *obj) const; 
   
   Int_t Size() const { return fNumberOfInteractions; }//fSegmentNumber.size(); }
 
@@ -74,67 +69,10 @@ public:
   double GetThetaDeg() { return GetTheta()*TMath::RadToDeg(); }
 
   bool HasInteractions() { return fNumberOfInteractions; }
-  //TGretinaHit& operator+=(const TGretinaHit&);
-  //TGretinaHit& operator+(const TGretinaHit&);
   bool operator<(const TGretinaHit &rhs) const { return fCoreEnergy > rhs.fCoreEnergy; }
 
-
-
-  double GetDopplerSim(double beta, double en,const TVector3 *gvec=0, const TVector3 *vec=0){
-    if(Size()<1)
-      return 0.0;
-    if(vec==0) {
-      vec = &BeamUnitVec;
-    }
-    TVector3 vechold = GetPosition();
-    if(gvec==0){
-      gvec = &vechold;
-    }
-    
-    double tmp = 0.0;
-    double gamma = 1/(sqrt(1-pow(beta,2)));
-    tmp = en*gamma *(1 - beta*TMath::Cos(gvec->Angle(*vec)));
-    return tmp;
-  }
-  double GetDoppler(double beta,const TVector3 *vec=0) {
-    if(Size()<1)
-      return 0.0;
-    if(vec==0) {
-      vec = &BeamUnitVec;
-    }
-    double tmp = 0.0;
-    double gamma = 1/(sqrt(1-pow(beta,2)));
-    tmp = fCoreEnergy*gamma *(1 - beta*TMath::Cos(GetPosition().Angle(*vec)));
-    return tmp;
-  } 
-  double GetDoppler_2(double beta,const TVector3 *vec=0) {
-    if(Size()<1)
-      return 0.0;
-    if(vec==0) {
-      vec = &BeamUnitVec;
-    }
-    double tmp = 0.0;
-    double gamma = 1/(sqrt(1-pow(beta,2)));
-    tmp = fCoreEnergy*gamma *(1 - beta*TMath::Cos(GetPosition_2().Angle(*vec)));
-    return tmp;
-  } 
-  //double GetDoppler(const TS800 *s800,bool doDTAcorr=false,int EngRange=-1);
-  double GetDoppler(int EngRange, double beta,const TVector3 *vec=0) {
-    if(Size()<1)
-      return 0.0;
-    if(vec==0) {
-      vec = &BeamUnitVec;
-    }
-    double tmp = 0.0;
-    double gamma = 1/(sqrt(1-pow(beta,2)));
-    tmp = GetCoreEnergy(EngRange)*gamma *(1 - beta*TMath::Cos(GetPosition().Angle(*vec)));
-    return tmp;
-  }
-
-
-
+  double GetDoppler(double beta,const TVector3 *vec=0);
   double GetDoppler_dB(double beta,const TVector3 *vec=0, double Dta=0);
-
 
 
   Int_t    GetFirstIntPoint()             const { return fFirstInteraction;     }
@@ -170,7 +108,7 @@ public:
   void SortHits();
 
   Long_t  fTimeStamp;
-  Float_t fWalkCorrection;
+  Float_t fT0; //WalkCorrection;
 
   Int_t   fAddress;
   Int_t   fCrystalId;
@@ -202,7 +140,7 @@ public:
   std::vector<Float_t>  fInteractionEnergy; //[fNumberOfInteractions]
   std::vector<Float_t>  fInteractionFraction; //[fNumberOfInteractions]
 
-  ClassDef(TGretinaHit,4)
+  ClassDef(TGretinaHit,5)
 };
 
 
