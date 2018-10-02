@@ -1410,10 +1410,13 @@ bool GCanvas::Process2DKeyboardPress(Event_t *event,UInt_t *keysym) {
 
     case kKey_x: {
                    GH2D* ghist = NULL;
+                   TH2*  hhist =NULL;
                    for(auto hist : hists) {
                      if(hist->InheritsFrom(GH2Base::Class())){
                        ghist = (GH2D*)hist;
                        break;
+                     }else if(hist->InheritsFrom(TH2::Class())){
+                       hhist = (TH2*)hist;
                      }
                    }
 
@@ -1425,6 +1428,12 @@ bool GCanvas::Process2DKeyboardPress(Event_t *event,UInt_t *keysym) {
                        phist->Draw("");
                      }
                      edited=true;
+                   } else if(hhist) {
+                     TH1 *phist = hhist->ProjectionX();     
+                     if(phist) {
+                       new GCanvas();
+                       phist->Draw("");
+                     }
                    }
                  }
                  break;
@@ -1453,10 +1462,13 @@ bool GCanvas::Process2DKeyboardPress(Event_t *event,UInt_t *keysym) {
 
     case kKey_y: {
                    GH2D* ghist = NULL;
+                   TH2*  hhist = NULL;
                    for(auto hist : hists) {
                      if(hist->InheritsFrom(GH2Base::Class())){
                        ghist = (GH2D*)hist;
                        break;
+                     }else if(hist->InheritsFrom(TH2::Class())){
+                       hhist = (TH2*)hist;
                      }
                    }
 
@@ -1469,7 +1481,13 @@ bool GCanvas::Process2DKeyboardPress(Event_t *event,UInt_t *keysym) {
                      if(phist) {
                        new GCanvas();
                        phist->Draw("");
+                   } else if(hhist) {
+                     TH1 *phist = hhist->ProjectionY();     
+                     if(phist) {
+                       new GCanvas();
+                       phist->Draw("");
                      }
+                   }
                      edited=true;
                    }
                  }
