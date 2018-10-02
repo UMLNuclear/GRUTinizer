@@ -23,7 +23,6 @@ public:
   virtual void          InsertHit(const TDetectorHit& hit);
   virtual TDetectorHit& GetHit(int i)            { return mode1_hits.at(i); }
 
-
   const TMode1Hit& GetMode1Hit(int i) { return mode1_hits.at(i); }
   void PrintHit(int i){ mode1_hits.at(i).Print(); }
 
