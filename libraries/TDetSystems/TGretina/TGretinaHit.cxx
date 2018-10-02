@@ -81,10 +81,10 @@ const char *TGretinaHit::GetName() const {
 
 TVector3 TGretinaHit::GetCrystalPosition()  const { return TGretina::GetCrystalPosition(fCrystalId); }
 TVector3 TGretinaHit::GetSegmentPosition()  const { if(fSegmentNumber.size()) 
-                                                    return TGretina::GetSegmentPosition(fCrystalId,fSegmentNumber.at(0));
-                                                  else
-                                                    return TGretina::GetSegmentPosition(fCrystalId,0);
-                                                }
+  return TGretina::GetSegmentPosition(fCrystalId,fSegmentNumber.at(0));
+  else
+    return TGretina::GetSegmentPosition(fCrystalId,0);
+}
 
 
 
@@ -95,7 +95,6 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   //SetAddress(kDetectorSystems::GRETINA, 1, raw.crystal_id);
   //                     HOLE          CRYSTAL     SEGMENT
   //SetAddress(kDetectorSystems::GRETINA, 1, raw.crystal_id);
-
   //std::cout << "-------------------------------------------------" << std::endl;
   //std::cout << raw << std::endl;
   Clear();
@@ -108,9 +107,9 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   //fAddress = (1<<24) + (fCrystalId<<16);
   //fAddress = (1<<24) + ( raw.board_id );
   int board_id = ((fCrystalId/4) << 8) ;  //hole  number : 0x1f00
-//    board_id =                       ;  //card  number : 0x0030  information not available here.
-      board_id += ((fCrystalId%4) << 6) ;  //x-tal number : 0x00c0
-      board_id += 9;                       //chan  number : 0x000f  information not available here(assume core).
+  //    board_id =                       ;  //card  number : 0x0030  information not available here.
+  board_id += ((fCrystalId%4) << 6) ;  //x-tal number : 0x00c0
+  board_id += 9;                       //chan  number : 0x000f  information not available here(assume core).
   fAddress = (1<<24) + board_id;
 
 
@@ -121,7 +120,7 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   fNumberOfInteractions = raw.num;
   fPad = raw.pad;
 
-  float first_interaction_value  = sqrt(-1);
+  float first_interaction_value  = fFirstInteraction;//sqrt(-1);
   float second_interaction_value = sqrt(-1);
 
   for(int i=0; i<fNumberOfInteractions; i++) {
@@ -129,18 +128,19 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
     //printf("[%02i] : seg[%02i] = %.02f\n",i,raw.intpts[i].seg,raw.intpts[i].seg_ener); fflush(stdout);
     fSegmentNumber.push_back(raw.intpts[i].seg);
     fGlobalInteractionPosition.push_back(TGretina::CrystalToGlobal(fCrystalId,
-                                                              raw.intpts[i].x,
-                                                              raw.intpts[i].y,
-                                                              raw.intpts[i].z));
+          raw.intpts[i].x,
+          raw.intpts[i].y,
+          raw.intpts[i].z));
     fLocalInteractionPosition.push_back(TVector3(raw.intpts[i].x,
-                                                 raw.intpts[i].y,
-                                                 raw.intpts[i].z));
+          raw.intpts[i].y,
+          raw.intpts[i].z));
 
     float seg_ener = raw.intpts[i].seg_ener;
     float seg_frac = raw.intpts[i].e;
     fInteractionEnergy.push_back(seg_ener);
     fInteractionFraction.push_back(seg_frac);
 
+    // fFirstInteraction = i;
     if(seg_ener >= first_interaction_value){
       second_interaction_value = first_interaction_value;
       first_interaction_value = seg_ener;
@@ -150,9 +150,9 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
       fSecondInteraction = i;
       second_interaction_value = seg_ener;
     }
+  
   }
-  //  fFirstInteraction=0;
-  SortHits();
+  //  SortHits();   //removes double interactions, sorts segments by energy
   //  Print("all");
 
 }
@@ -217,10 +217,10 @@ void TGretinaHit::SortHits(){
   std::vector<interaction_point> ips;
   for(int i=0; i<fNumberOfInteractions; i++){
     ips.push_back(interaction_point(fSegmentNumber[i],
-				    fGlobalInteractionPosition[i],
-				    fLocalInteractionPosition[i],
-				    fInteractionEnergy[i],
-				    fInteractionFraction[i]));
+          fGlobalInteractionPosition[i],
+          fLocalInteractionPosition[i],
+          fInteractionEnergy[i],
+          fInteractionFraction[i]));
   }
   //printf("ips.size() == %i\n",ips.size());
   // Fill all interaction points
@@ -234,7 +234,7 @@ void TGretinaHit::SortHits(){
   fNumberOfInteractions = 0;
 
   std::sort(ips.begin(), ips.end());
-  
+
   for(auto& point : ips){
     if(fNumberOfInteractions >= MAXHPGESEGMENTS){
       break;
@@ -264,15 +264,15 @@ void TGretinaHit::AddToSelf(const TGretinaHit& rhs) {
   std::set<interaction_point> ips;
   for(int i=0; i<fNumberOfInteractions; i++){
     ips.insert(interaction_point(fSegmentNumber[i],
-                                 fGlobalInteractionPosition[i],
-                                 fLocalInteractionPosition[i],
-                                 fInteractionEnergy[i]));
+          fGlobalInteractionPosition[i],
+          fLocalInteractionPosition[i],
+          fInteractionEnergy[i]));
   }
   for(int i=0; i<rhs.fNumberOfInteractions; i++){
     ips.insert(interaction_point(rhs.fSegmentNumber[i],
-                                 rhs.fGlobalInteractionPosition[i],
-                                 rhs.fLocalInteractionPosition[i],
-                                 rhs.fInteractionEnergy[i]));
+          rhs.fGlobalInteractionPosition[i],
+          rhs.fLocalInteractionPosition[i],
+          rhs.fInteractionEnergy[i]));
   }
 
   // Copy other information to self if needed
@@ -311,17 +311,17 @@ void TGretinaHit::AddToSelf(const TGretinaHit& rhs) {
 
 
 /*
-TGretinaHit& TGretinaHit::operator+=(const TGretinaHit& rhs) {
-  AddToSelf(rhs);
-  return *this;
-}
+   TGretinaHit& TGretinaHit::operator+=(const TGretinaHit& rhs) {
+   AddToSelf(rhs);
+   return *this;
+   }
 
-TGretinaHiti& TGretinaHit::operator+(TGretinaHit lhs,const TGretinaHit& rhs) {
+   TGretinaHiti& TGretinaHit::operator+(TGretinaHit lhs,const TGretinaHit& rhs) {
 
-  lhs += rhs;
-  return lhs;
-}
-*/
+   lhs += rhs;
+   return lhs;
+   }
+   */
 
 
 
@@ -344,7 +344,7 @@ TVector3 TGretinaHit::GetFirstIntPosition() const {
   double zoffset = GValue::Value("GRETINA_Z_OFFSET");
   if(std::isnan(zoffset))
     zoffset=0.00;
-  
+
   TVector3 offset(xoffset,yoffset,zoffset);
 
   if(GetFirstIntPoint()>-1){
@@ -352,28 +352,6 @@ TVector3 TGretinaHit::GetFirstIntPosition() const {
     IntPos.SetX(IntPos.X()+xoffset);
     IntPos.SetY(IntPos.Y()+yoffset);
     IntPos.SetZ(IntPos.Z()+zoffset);
-
-    return IntPos;
-  }
-  return TDetectorHit::BeamUnitVec;
-}
-
-TVector3 TGretinaHit::GetFirstIntPosition_2() const {
-  double xoffset = GValue::Value("GRETINA_X_OFFSET");
-  if(std::isnan(xoffset))
-    xoffset=0.00;
-  double yoffset = GValue::Value("GRETINA_Y_OFFSET");
-  if(std::isnan(yoffset))
-    yoffset=0.00;
-  double zoffset = GValue::Value("GRETINA_Z_OFFSET");
-  if(std::isnan(zoffset))
-    zoffset=0.00;
-
-  if(GetFirstIntPoint()>-1){
-    TVector3 IntPos = GetInteractionPosition(GetFirstIntPoint());
-    IntPos.SetX(IntPos.X()-xoffset);
-    IntPos.SetY(IntPos.Y()-yoffset);
-    IntPos.SetZ(IntPos.Z()-zoffset);
 
     return IntPos;
   }
@@ -390,13 +368,13 @@ TVector3 TGretinaHit::GetLastPosition() const {
   double zoffset = GValue::Value("GRETINA_Z_OFFSET");
   if(std::isnan(zoffset))
     zoffset=0.00;
- 
+
   TVector3 offset(xoffset,yoffset,zoffset);
 
   if(fNumberOfInteractions>0)
-     return GetInteractionPosition(fNumberOfInteractions-1) + offset;
-   return TDetectorHit::BeamUnitVec;
-  
+    return GetInteractionPosition(fNumberOfInteractions-1) + offset;
+  return TDetectorHit::BeamUnitVec;
+
 }
 
 TVector3 TGretinaHit::GetSecondIntPosition() const {
@@ -439,9 +417,9 @@ void TGretinaHit::Print(Option_t *opt) const {
   if(!strcmp(opt,"all")) {
     for(int i=0;i<fNumberOfInteractions;i++) {
       printf("\t\tSeg[%02i]\tEng: % 4.2f / % 4.2f  \t(X,Y,Z) % 3.2f % 3.2f % 3.2f\n",fSegmentNumber[i],fInteractionEnergy[i],fInteractionFraction[i],
-                                                                          fLocalInteractionPosition[i].X(),
-                                                                          fLocalInteractionPosition[i].Y(),
-                                                                          fLocalInteractionPosition[i].Z() ); fflush(stdout);
+          fLocalInteractionPosition[i].X(),
+          fLocalInteractionPosition[i].Y(),
+          fLocalInteractionPosition[i].Z() ); fflush(stdout);
       //std::cout << "\t\tSe[" << i << "]Seg Num:      \t" << fSegmentNumber[i]     << std::endl
       //          << "\t\t[" << i << "]Seg Eng:      \t" << fInteractionEnergy[i] << std::endl
       //                   << "\t\t[" << i << "]Seg Pos(R,T,P)\t" << fGlobalInteractionPosition[i].Mag()
@@ -482,24 +460,24 @@ void TGretinaHit::Clear(Option_t *opt) {
   fLocalInteractionPosition.clear();
   fInteractionEnergy.clear();
   fInteractionFraction.clear();
-/*
-  for(int i=0;i<MAXHPGESEGMENTS;i++) {
-    fSegmentNumber[i]             = -1 ;
-    fGlobalInteractionPosition[i].Clear(opt);
-    fLocalInteractionPosition[i].Clear(opt);
-    fInteractionEnergy[i]         = -1 ;
-    fInteractionFraction[i]         = -1 ;
+  /*
+     for(int i=0;i<MAXHPGESEGMENTS;i++) {
+     fSegmentNumber[i]             = -1 ;
+     fGlobalInteractionPosition[i].Clear(opt);
+     fLocalInteractionPosition[i].Clear(opt);
+     fInteractionEnergy[i]         = -1 ;
+     fInteractionFraction[i]         = -1 ;
 
-  }
-  */
+     }
+     */
 }
 
 Int_t TGretinaHit::Compare(const TObject *obj) const { 
-    TGretinaHit *other = (TGretinaHit*)obj;
-    if(this->GetCoreEnergy()>other->GetCoreEnergy())
-      return -1;
-    else if(this->GetCoreEnergy()<other->GetCoreEnergy())
-      return 1;  //sort largest to smallest.
-    return 0;
-  }
+  TGretinaHit *other = (TGretinaHit*)obj;
+  if(this->GetCoreEnergy()>other->GetCoreEnergy())
+    return -1;
+  else if(this->GetCoreEnergy()<other->GetCoreEnergy())
+    return 1;  //sort largest to smallest.
+  return 0;
+}
 
