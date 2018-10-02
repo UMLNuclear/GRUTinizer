@@ -16,7 +16,7 @@
 #define MAXHPGESEGMENTS 36
 
 class TSmartBuffer;
-class TS800;
+//class TS800;
 
 class TGretinaHit : public TDetectorHit {
 
@@ -118,7 +118,7 @@ public:
     tmp = fCoreEnergy*gamma *(1 - beta*TMath::Cos(GetPosition_2().Angle(*vec)));
     return tmp;
   } 
-  double GetDoppler(const TS800 *s800,bool doDTAcorr=false,int EngRange=-1);
+  //double GetDoppler(const TS800 *s800,bool doDTAcorr=false,int EngRange=-1);
   double GetDoppler(int EngRange, double beta,const TVector3 *vec=0) {
     if(Size()<1)
       return 0.0;

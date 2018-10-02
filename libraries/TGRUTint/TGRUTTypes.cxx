@@ -12,9 +12,9 @@
 #include "TMode3.h"
 #include "TNSCLScalers.h"
 //#include "TPhosWall.h"
-#include "TS800.h"
+//#include "TS800.h"
 //#include "TS800Scaler.h"
-//#include "TS800Sim.h"
+#include "TS800Sim.h"
 //#include "TSega.h"
 
 // Map from string to detector enum.
@@ -32,7 +32,7 @@ std::map<std::string, kDetectorSystems> detector_system_map{
 //  {"Caesar",          kDetectorSystems::CAESAR},
 //  {"Phoswall",        kDetectorSystems::PHOSWALL},
 //  {"S800",            kDetectorSystems::S800},
-//  {"S800_SIM",        kDetectorSystems::S800_SIM},
+  {"S800_SIM",        kDetectorSystems::S800_SIM},
 //  {"FastScint",       kDetectorSystems::FASTSCINT},
 
 //  {"FSU",             kDetectorSystems::FSU},
@@ -55,11 +55,11 @@ std::map<kDetectorSystems, TDetectorFactoryBase*> detector_factory_map {
   {kDetectorSystems::GRETINA,     new TDetectorFactory<TGretina>() },
   {kDetectorSystems::MODE1,       new TDetectorFactory<TMode1>() },
   {kDetectorSystems::MODE3,       new TDetectorFactory<TMode3>() },
-  {kDetectorSystems::S800,        new TDetectorFactory<TS800>() },
+//  {kDetectorSystems::S800,        new TDetectorFactory<TS800>() },
 //  {kDetectorSystems::S800SCALER,  new TDetectorFactory<TS800Scaler>() },
   {kDetectorSystems::BANK29,      new TDetectorFactory<TBank29>() },
   {kDetectorSystems::GRETINA_SIM, new TDetectorFactory<TGretSim>() },
-//  {kDetectorSystems::S800_SIM,    new TDetectorFactory<TS800Sim>() },
+  {kDetectorSystems::S800_SIM,    new TDetectorFactory<TS800Sim>() },
 //  {kDetectorSystems::LENDA,       new TDetectorFactory<TLenda>() },
 
 //  {kDetectorSystems::SEGA,        new TDetectorFactory<TSega>() },

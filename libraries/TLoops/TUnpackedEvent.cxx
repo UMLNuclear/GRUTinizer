@@ -12,7 +12,7 @@
 #include "TNSCLScalers.h"
 //#include "TPhosWall.h"
 //#include "TS800.h"
-//#include "TS800Sim.h"
+#include "TS800Sim.h"
 //#include "TS800Scaler.h"
 //#include "TSega.h"
 //#include "TFastScint.h"
