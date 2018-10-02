@@ -10,9 +10,8 @@
 #include "TDirectoryFile.h"
 #include "TProfile.h"
 
-#include "GH1D.h"
-#include "GH2D.h"
-#include "GH2D.h"
+#include "TH1D.h"
+#include "TH2D.h"
 
 #include "GValue.h"
 
@@ -50,7 +49,7 @@ TH1* TRuntimeObjects::FillHistogram(const char* name,
   TH1* hist = (TH1*) GetObjects().FindObject(name);
   if(!hist){
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH1D(name,name,bins,low,high);
+    hist = new TH1D(name,name,bins,low,high);
     GetObjects().Add(hist);
   }
   if(!(std::isnan(value))) {
@@ -59,11 +58,11 @@ TH1* TRuntimeObjects::FillHistogram(const char* name,
   return hist;
 }
 
-GH1D* TRuntimeObjects::InitHistogram(const char* name,const char *title,int bins, double low, double high) {
-  GH1D* hist = (GH1D*) GetObjects().FindObject(name);
+TH1D* TRuntimeObjects::InitHistogram(const char* name,const char *title,int bins, double low, double high) {
+  TH1D* hist = (TH1D*) GetObjects().FindObject(name);
   if(!hist){
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH1D(name,title,bins,low,high);
+    hist = new TH1D(name,title,bins,low,high);
     GetObjects().Add(hist);
   }
   return hist;
@@ -76,7 +75,7 @@ TH2* TRuntimeObjects::FillHistogram(const char* name,
   TH2* hist = (TH2*) GetObjects().FindObject(name);
   if(!hist){
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH2D(name,name,
+    hist = new TH2D(name,name,
                     Xbins, Xlow, Xhigh,
                     Ybins, Ylow, Yhigh);
     GetObjects().Add(hist);
@@ -87,12 +86,12 @@ TH2* TRuntimeObjects::FillHistogram(const char* name,
   return hist;
 }
 
-GH2D* TRuntimeObjects::InitHistogram(const char* name,const char *title,int Xbins, double Xlow, double Xhigh,
+TH2D* TRuntimeObjects::InitHistogram(const char* name,const char *title,int Xbins, double Xlow, double Xhigh,
                                                                         int Ybins, double Ylow, double Yhigh) {
-  GH2D* hist = (GH2D*) GetObjects().FindObject(name);
+  TH2D* hist = (TH2D*) GetObjects().FindObject(name);
   if(!hist){
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH2D(name,title,
+    hist = new TH2D(name,title,
                     Xbins, Xlow, Xhigh,
                     Ybins, Ylow, Yhigh);
     GetObjects().Add(hist);
@@ -100,20 +99,21 @@ GH2D* TRuntimeObjects::InitHistogram(const char* name,const char *title,int Xbin
   return hist;
 }
 
+/*
 int  TRuntimeObjects::FillHistogram(const char* name) {
   TH1* hist = (TH1*) GetObjects().FindObject(name);
   if(!hist){
     return -100;
   }
   if(hist->GetDimension()==1) {
-    GH1D *ghist = (GH1D*)hist;
+    TH1D *ghist = (TH1D*)hist;
     return ghist->Fill(this);
   } else {
-    GH2D *ghist = (GH2D*)hist;
+    TH2D *ghist = (TH2D*)hist;
     return ghist->Fill(this);
   }
 }
-
+*/
 
 TProfile* TRuntimeObjects::FillProfileHist(const char* name,
 					   int Xbins, double Xlow, double Xhigh, double Xvalue,
@@ -137,7 +137,7 @@ TH2* TRuntimeObjects::FillHistogramSym(const char* name,
   TH2* hist = (TH2*) GetObjects().FindObject(name);
   if(!hist){
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH2D(name,name,
+    hist = new TH2D(name,name,
                             Xbins, Xlow, Xhigh,
                             Ybins, Ylow, Yhigh);
     GetObjects().Add(hist);
@@ -167,7 +167,7 @@ TDirectory* TRuntimeObjects::FillHistogram(const char* dirname,const char* name,
   if(!hist){
     dir->cd();
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH1D(name,name,
+    hist = new TH1D(name,name,
 		    bins, low, high);
     dir->Add(hist);
     dir->cd("../");
@@ -181,7 +181,7 @@ TDirectory* TRuntimeObjects::FillHistogram(const char* dirname,const char* name,
 
 }
 
-GH1D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const char *title,
+TH1D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const char *title,
                                    int bins, double low, double high) {
   TDirectory *dir = (TDirectory*)GetObjects().FindObject(dirname);
   if(!dir){
@@ -189,11 +189,11 @@ GH1D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const 
     GetObjects().Add(dir);
   }
 
-  GH1D* hist = (GH1D*)dir->FindObject(name);
+  TH1D* hist = (TH1D*)dir->FindObject(name);
   if(!hist){
     dir->cd();
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH1D(name,title,
+    hist = new TH1D(name,title,
 		    bins, low, high);
     dir->Add(hist);
     dir->cd("../");
@@ -201,7 +201,7 @@ GH1D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const 
 
   return hist;
 }
-
+/*
 int TRuntimeObjects::FillHistogram(const char* dirname,const char* name) {
   TDirectory *dir = (TDirectory*)GetObjects().FindObject(dirname);
   if(!dir){
@@ -213,14 +213,14 @@ int TRuntimeObjects::FillHistogram(const char* dirname,const char* name) {
     return -1000;
   }
   if(hist->GetDimension()==1) {
-    GH1D *ghist = (GH1D*)hist;
+    TH1D *ghist = (TH1D*)hist;
     return ghist->Fill(this);
   } else {
-    GH2D *ghist = (GH2D*)hist;
+    TH2D *ghist = (TH2D*)hist;
     return ghist->Fill(this);
   }
 }
-
+*/
 
 TDirectory* TRuntimeObjects::FillHistogram(const char* dirname,const char* name,
                                            int Xbins, double Xlow, double Xhigh, double Xvalue,
@@ -236,7 +236,7 @@ TDirectory* TRuntimeObjects::FillHistogram(const char* dirname,const char* name,
   if(!hist){
     dir->cd();
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH2D(name,name,
+    hist = new TH2D(name,name,
                             Xbins, Xlow, Xhigh,
                             Ybins, Ylow, Yhigh);
     dir->Add(hist);
@@ -251,7 +251,7 @@ TDirectory* TRuntimeObjects::FillHistogram(const char* dirname,const char* name,
   return dir;
 }
 
-GH2D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const char* title,
+TH2D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const char* title,
                                            int Xbins, double Xlow, double Xhigh,
                                            int Ybins, double Ylow, double Yhigh) {
   TDirectory *dir = (TDirectory*)GetObjects().FindObject(dirname);
@@ -260,11 +260,11 @@ GH2D* TRuntimeObjects::InitHistogram(const char* dirname,const char* name,const 
     GetObjects().Add(dir);
   }
 
-  GH2D* hist = (GH2D*)dir->FindObject(name);
+  TH2D* hist = (TH2D*)dir->FindObject(name);
   if(!hist){
     dir->cd();
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH2D(name,name,
+    hist = new TH2D(name,name,
                             Xbins, Xlow, Xhigh,
                             Ybins, Ylow, Yhigh);
     dir->Add(hist);
@@ -316,7 +316,7 @@ TDirectory* TRuntimeObjects::FillHistogramSym(const char* dirname,const char* na
   if(!hist){
     dir->cd();
     //std::cout << "New Histogram: " << name << std::endl;
-    hist = new GH2D(name,name,
+    hist = new TH2D(name,name,
                             Xbins, Xlow, Xhigh,
                             Ybins, Ylow, Yhigh);
     dir->Add(hist);
@@ -333,7 +333,7 @@ TDirectory* TRuntimeObjects::FillHistogramSym(const char* dirname,const char* na
   return dir;/*
   TH2* hist = (TH2*) GetObjects().FindObject(name);
   if(!hist){
-    hist = new GH2D(name.c_str(),name.c_str(),
+    hist = new TH2D(name.c_str(),name.c_str(),
                             Xbins, Xlow, Xhigh,
                             Ybins, Ylow, Yhigh);
     GetObjects().Add(hist);
