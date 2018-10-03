@@ -1,5 +1,6 @@
 #include "TMode1Hit.h"
 
+#include "TMath.h"
 #include "TRandom.h"
 
 #include "TGEBEvent.h"
@@ -44,3 +45,15 @@ void TMode1Hit::Clear(Option_t *opt) {
   fFHXId = -1;
 }
 
+double TMode1Hit::GetDoppler(double beta,const TVector3 *vec) {
+  //if(Size()<1)
+  //  return 0.0;
+  TVector3 unit(0,0,1);
+  if(vec==0) {
+    vec = &unit;
+  }
+  double tmp = 0.0;
+  double gamma = 1/(sqrt(1-pow(beta,2)));
+  tmp = fESum*gamma *(1 - beta*TMath::Cos(GetFirstIntPosition().Angle(*vec)));
+  return tmp;
+} 

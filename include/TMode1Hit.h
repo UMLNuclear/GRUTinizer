@@ -38,6 +38,7 @@ class TMode1Hit : public TDetectorHit {
     TVector3 GetFirstIntPosition() const { return fFirstInt; }
     TVector3 GetSecondIntPosition() const { return fSecondInt; }
 
+    double GetDoppler(double beta,const TVector3 *vec=0);
 
     //private:
 
