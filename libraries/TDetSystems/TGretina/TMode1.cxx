@@ -74,6 +74,7 @@ int TMode1::BuildHits(std::vector<TRawEvent>& raw_data){
       hit.fSecondInt.SetY(*((float*)buf.GetData()+x)); x+=sizeof(float); if(x>=buf.GetSize()) return 1;
       hit.fSecondInt.SetY(*((float*)buf.GetData()+x)); x+=sizeof(float); if(x>=buf.GetSize()) return 1;
       hit.fE1 = *((float*)buf.GetData()+x); x+=sizeof(float); if(x>=buf.GetSize()) return 1;
+      InsertHit(hit);
     }
     
     /*
