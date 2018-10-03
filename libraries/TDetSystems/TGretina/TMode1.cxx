@@ -68,13 +68,19 @@ Int_t TMode1::BuildHits(std::vector<TRawEvent>& raw_data){
       hit.fFom =  *((Float_t*)(buf.GetData()+x)); x+=sizeof(Float_t);//if(x>=buf.GetSize()) return 1; 
       hit.fTracked =  *((Int_t*)(buf.GetData()+x)); x+=sizeof(Int_t); ///if(x>=buf.GetSize()) return 1;
       hit.SetTimestamp(*((Long_t*)(buf.GetData()+x))); x+=sizeof(Long_t);//if(x>=buf.GetSize()) return 1;
-      hit.fFirstInt.SetX(*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);//if(x>=buf.GetSize()) return 1; 
-      hit.fFirstInt.SetY(*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
-      hit.fFirstInt.SetY(*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
+      
+      double xx = (*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);//if(x>=buf.GetSize()) return 1; 
+      double yy = (*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
+      double zz = (*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
+      hit.fFirstInt.SetXYZ(xx,yy,zz);
+
       hit.fE0 = *((Float_t*)(buf.GetData()+x)); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
-      hit.fSecondInt.SetX(*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
-      hit.fSecondInt.SetY(*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
-      hit.fSecondInt.SetY(*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t); //if(x>=buf.GetSize()) return 1;
+      double xx2 = (*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
+      double yy2 = (*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t);// if(x>=buf.GetSize()) return 1;
+      double zz2 = (*((Float_t*)(buf.GetData()+x))); x+=sizeof(Float_t); //if(x>=buf.GetSize()) return 1;
+      hit.fSecondInt.SetXYZ(xx2,yy2,zz2);
+      
+      
       hit.fE1 = *((Float_t*)(buf.GetData()+x)); x+=sizeof(Float_t); //if(x>=buf.GetSize()) return 1;
       hit.fFHXId = *((Short_t*)(buf.GetData()+x)); x+=sizeof(Short_t); //if(x>=buf.GetSize()) return 1;
       InsertHit(hit);

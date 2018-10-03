@@ -24,6 +24,7 @@ class TMode1Hit : public TDetectorHit {
     }
 
     virtual double GetEnergy() const { return fESum; } 
+    virtual double GetESum() const { return fESum; } 
     Float_t GetFirstIntEnergy() const { return fE0; }
     Float_t GetSecondIntEnergy() const { return fE1; }
 
