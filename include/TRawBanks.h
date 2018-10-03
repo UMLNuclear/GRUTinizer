@@ -239,10 +239,12 @@ typedef struct {
   Int_t   ndet;
   Float_t fom;
   Int_t   tracked;
+  //Short_t   tracked;
   Long_t  timestamp;
   Float_t x0,y0,z0,e0;
   Float_t x1,y1,z1,e1;
-  //Short_t fhcrID;
+  //Int_t fhcrID;
+  //Int_t unknown1;
 }__attribute__((__packed__)) TrackedGammaRay;
 
 friend std::ostream& operator<<(std::ostream& os, const TrackedGammaRay &gam);

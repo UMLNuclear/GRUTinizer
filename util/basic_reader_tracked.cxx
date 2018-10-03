@@ -50,6 +50,7 @@ int main(int argc, char **argv) {
         {
           const char *data = buf.GetData();
           TRawEvent::GEBBankType3 raw = *(const TRawEvent::GEBBankType3*)data;
+          std::cout << count3 << endl;
           std::cout << raw << std::endl;
           //event.Print();
           //std::cout << event.GetBodySize() << std::endl;
@@ -63,7 +64,7 @@ int main(int argc, char **argv) {
         }
         break;
     };
-    if(count3>0 && count1>0) break;
+    //if(count3>0 && count1>0) break;
   }
   printf("\n count1: %i\n",count1);
   printf(  " count3: %i\n",count3);

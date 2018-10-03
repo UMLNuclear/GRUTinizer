@@ -92,14 +92,17 @@ void MakeHistograms(TRuntimeObjects& obj) {
       obj.FillHistogram("map",180,1,180,hit.GetThetaDeg(),
           360,1,360,hit.GetPhiDeg());
 
+      obj.FillHistogram(Form("xtal%03i",hit.GetCrystalId()),"NumberOfInts",40,0,40,hit.NumberOfInteractions());
 
-      //for(int x=0;x<hit.NumberOfInteractions();x++) {
-      //  TVector3 ip = hit.GetLocalPosition(x);
-      //  obj.FillHistogram(Form("xtal%03i",hit.GetCrystalId()),"position_xy",100,-50,50,ip.X(),
-      //      100,-50,50,ip.Y());
-      //  obj.FillHistogram(Form("xtal%03i",hit.GetCrystalId()),"position_xz",100,-50,50,ip.X(),
-      //      100,0,100,ip.Z());
-      //}
+      for(int x=0;x<hit.NumberOfInteractions();x++) {
+        TVector3 ip = hit.GetLocalPosition(x);
+        obj.FillHistogram(Form("xtal%03i",hit.GetCrystalId()),"position_xy",100,-50,50,ip.X(),
+            100,-50,50,ip.Y());
+        obj.FillHistogram(Form("xtal%03i",hit.GetCrystalId()),"position_xz",100,-50,50,ip.X(),
+            100,0,100,ip.Z());
+        obj.FillHistogram(Form("xtal%03i",hit.GetCrystalId()),"position_yz",100,-50,50,ip.Y(),
+            100,0,100,ip.Z());
+      }
     }
   }
 

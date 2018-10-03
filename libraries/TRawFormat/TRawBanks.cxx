@@ -55,6 +55,7 @@ std::ostream& operator<<(std::ostream& os, const TRawEvent::TrackedGammaRay &gam
   os << "y1        = "<<std::setw(10)<<gam.y1 << std::endl;
   os << "z1        = "<<std::setw(10)<<gam.z1 << std::endl;
   os << "e1        = "<<std::setw(10)<<gam.e1 << std::endl;
+  //os << "e1        = "<<std::setw(10)<<gam.fhcrID << std::endl;
   return os;
 }
 
