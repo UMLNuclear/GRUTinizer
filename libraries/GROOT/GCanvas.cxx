@@ -506,6 +506,14 @@ bool GCanvas::HandleMousePress(Int_t event,Int_t x,Int_t y) {
     return false;
   }
 
+  //force the gPad to the mouse...
+  if(event==kButton1Down) {
+    TVirtualPad *sav = gPad;
+    TCanvas *c = (TCanvas*)gTQSender;
+    c->cd();
+    if(sav) sav->Update();
+  }
+
 
   TH1* hist = 0;
   if(GetSelected()->InheritsFrom(TH1::Class())) {
