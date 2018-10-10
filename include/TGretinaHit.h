@@ -10,13 +10,43 @@
 
 #include <cmath>
 
-//#include "TGEBEvent.h"
 #include "TDetectorHit.h"
 
 #define MAXHPGESEGMENTS 36
 
 class TSmartBuffer;
-//class TS800;
+class TInteractionPoint {
+
+  public:
+    TInteractionPoint() { } 
+    TInteractionPoint(int seg,float eng,float frac,TVector3 lpos) :
+                       fSegNum(seg),fEng(eng),fDecompEng(frac),fLPosition(lpos) { }
+    virtual ~TInteractionPoint() { }
+
+    int   GetSegNum()  const { return fSegNum;    }
+    float GetPreampE() const { return fEng;       }
+    float GetDecompE() const { return fDecompEng; }
+    float GetAssignE() const { return fAssignedEng; }
+    int   GetOrder()   const { return fOrder; } 
+    TVector3 GetPosition(int xtal) const; // { return TGretina::CrystalToGlobal(xtal,
+                                          //                                  fLPosition.X(),
+                                          //                                  fLPosition.Y(),
+                                          //                                  fLPosition.Z()); }
+    TVector3 GetLocalPosition() const { return fLPosition; }
+  
+  private:
+    int   fSegNum;
+    float fEng;          // energy as recorded by preamp.  energy in mode2 format
+    float fDecompEng;    // energy as assigned by decomp.  fraction in mode2 format
+    float fAssignedEng;  // percent eng assigned by decomp scaled to the core. not in mode2 format
+    int   fOrder;        // interaction order
+    //TVector3 fPosition;  // in global coordinates
+    TVector3 fLPosition; // in local coordinates.
+  ClassDef(TInteractionPoint,1)
+
+};
+
+
 
 class TGretinaHit : public TDetectorHit {
 
@@ -74,36 +104,24 @@ public:
   double GetDoppler(double beta,const TVector3 *vec=0);
   double GetDoppler_dB(double beta,const TVector3 *vec=0, double Dta=0);
 
+  TVector3 GetPosition() const; //                  const { return GetIntPosition(0); }
 
-  Int_t    GetFirstIntPoint()             const { return fFirstInteraction;     }
-  Int_t    GetSecondIntPoint()            const { return fSecondInteraction;    }
-  Int_t    NumberOfInteractions()         const { return fNumberOfInteractions; }
-  Int_t    GetSegmentId(const int &i)     const { return fSegmentNumber.at(i); }
-  Float_t  GetSegmentEng(const int &i)    const { return fInteractionEnergy.at(i); }
-  TVector3 GetInteractionPosition(int i)  const; //{ return fGlobalInteractionPosition[i]; }
-  TVector3 GetLocalPosition(int i) const;
-  //TVector3 GetCrystalPosition(int i)     const { return TVector3(0,0,1): }
-  TVector3 GetPosition()                  const { return GetFirstIntPosition(); }
-  TVector3 GetLastPosition()              const;
+  TInteractionPoint GetInteractionPoint(int i) const { return fInteractions.at(i); }
 
-  TVector3 GetCrystalPosition()           const; 
-  TVector3 GetSegmentPosition()           const; 
-                                                
-
-
-  TVector3 GetFirstIntPosition() const;
-  TVector3 GetSecondIntPosition() const;
-
-  void AddToSelf(const TGretinaHit& other);
-
-  //void SetPosition(TVector3 &vec) { fCorePosition = vec; }
-
-
+  Int_t    NumberOfInteractions()     const { return fNumberOfInteractions; }
+  Int_t    GetSegmentId(int i)        const { return GetInteractionPoint(i).GetSegNum(); }
+  Float_t  GetIntPreampEng(int i)     const { return GetInteractionPoint(i).GetPreampE(); }
+  Float_t  GetIntDecomEng(int i)      const { return GetInteractionPoint(i).GetDecompE(); }
+  Float_t  GetIntAssignEng(int i)     const { return GetInteractionPoint(i).GetAssignE(); }
+  TVector3 GetIntPosition(int i)      const { return GetInteractionPoint(i).GetPosition(GetCrystalId()); }
+  TVector3 GetLocalIntPosition(int i) const { return GetInteractionPoint(i).GetLocalPosition(); }
+  
   void   SetCoreEnergy(float temp) const { fCoreEnergy = temp; }
 
 
 //private:
-  void SortHits();
+  //void SortHits();
+  void SortInts();
 
   Long_t  fTimeStamp;
   Float_t fT0; //WalkCorrection;
@@ -115,8 +133,8 @@ public:
 
   Int_t   fPad;
 
-  Int_t   fFirstInteraction;
-  Int_t   fSecondInteraction;
+  //Int_t   fFirstInteraction;
+  //Int_t   fSecondInteraction;
 
   Int_t   fNumberOfInteractions;
 
@@ -125,7 +143,7 @@ public:
      Note: This is not equal to the segment number as read from the datastream.
      This is equal to 36*raw.crystal_id + raw.segnum.  ///not anymore pcb.
    */
-  std::vector<Int_t> fSegmentNumber; //[fNumberOfInteractions]
+  //std::vector<Int_t> fSegmentNumber; //[fNumberOfInteractions]
 
   /// The position of the interaction point in lab coordinates
   /**
@@ -133,13 +151,19 @@ public:
      This has been transformed to lab coordinates.
      To get the crystal coordinate, use TGretinaHit::GetCrystalPosition(int i).
    */
-  std::vector<TVector3> fGlobalInteractionPosition; //[fNumberOfInteractions]
-  std::vector<TVector3> fLocalInteractionPosition; //[fNumberOfInteractions]
-  std::vector<Float_t>  fInteractionEnergy; //[fNumberOfInteractions]
-  std::vector<Float_t>  fInteractionFraction; //[fNumberOfInteractions]
+  //std::vector<TVector3> fGlobalInteractionPosition; //[fNumberOfInteractions]
+  //std::vector<TVector3> fLocalInteractionPosition; //[fNumberOfInteractions]
+  //std::vector<Float_t>  fInteractionEnergy; //[fNumberOfInteractions]
+  //std::vector<Float_t>  fInteractionFraction; //[fNumberOfInteractions]
 
-  ClassDef(TGretinaHit,5)
+  std::vector<TInteractionPoint> fInteractions; //[fNumberOfInteractions];
+
+  ClassDef(TGretinaHit,6)
 };
 
 
 #endif
+
+
+
+

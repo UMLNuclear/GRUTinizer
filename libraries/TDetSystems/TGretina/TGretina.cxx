@@ -31,14 +31,16 @@ Float_t TGretina::m_segpos[2][36][3];
 bool    TGretina::fCRMATSet = false;
 
 bool DefaultAddback(const TGretinaHit& one,const TGretinaHit &two) {
-  TVector3 res = one.GetLastPosition()-two.GetPosition();
-  return ((std::abs(one.GetTime()-two.GetTime()) < 44.0) &&
-          (res.Mag() < 80.0) ) ;
+  //TVector3 res = one.GetLastPosition()-two.GetPosition();
+  return true; //((std::abs(one.GetTime()-two.GetTime()) < 44.0) &&
+               // (res.Mag() < 80.0) ) ;
 }
 
 std::function<bool(const TGretinaHit&,const TGretinaHit&)> TGretina::fAddbackCondition = DefaultAddback;
 
+
 void TGretina::BuildAddback(int EngRange) const {
+/*
   if( addback_hits.size() > 0 ||
       gretina_hits.size() == 0) {
     return;
@@ -74,6 +76,7 @@ void TGretina::BuildAddback(int EngRange) const {
       addback_hits.erase(addback_hits.begin() + erasing);
     }
   }
+*/
 }
 
 void TGretina::SetCRMAT() {
@@ -301,6 +304,30 @@ void TGretina::Print(Option_t *opt) const {
   printf(BLUE "--------------------------------" RESET_COLOR "\n");
 }
 
+/*
+void TGretina::PrintInteractions(Option_t *opt) const {
+  int ndet = Size();
+  for(int x=0;x<ndet;x++) {
+    TGretinaHit hit = GetGretinaHit(x);
+    //printf("xtal[%03i] ",hit.GetCrystalId());
+    int nint = hit.Size();
+    for(int y=0;y<nint;y++) {
+      //float ieng = hit.GetInteractionEng(y);
+      //float ifrac = hit.GetInteractionFrac(y);
+      float iper = hit.GetInteractionPercentage(y);
+      TVector3 ip = hit.GetInteractionPosition(y);
+      //printf("xtal[%03i]  %.1f / %.1f / %.1f / %.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
+      printf("xtal[%03i] %.1f / %.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
+          hit.GetCrystalId(),
+          //ifrac,ieng,iper,hit.GetCoreEnergy(),
+          iper,hit.GetCoreEnergy(),
+          hit.GetSegmentId(y),ip.X(),ip.Y(),ip.Z());
+    }
+  }
+  printf("--------------------\n");
+}
+*/
+
 void TGretina::SortHits() {
   std::sort(gretina_hits.begin(),gretina_hits.end());
 }
@@ -311,7 +338,7 @@ void TGretina::Clear(Option_t *opt) {
   addback_hits.clear();
 }
 
-
+/*
 void TGretina::DrawDopplerGamma(Double_t Beta,Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
   TString OptString = opt;
   if(!chain)
@@ -409,5 +436,5 @@ void TGretina::DrawCoreSummary(Option_t *gate,Option_t *opt,Long_t nentries,TCha
   h->GetXaxis()->SetTitle("Crystal ID");
   h->GetYaxis()->SetTitle("Energy [arb]");
   h->Draw(opt);
-
 }
+*/
