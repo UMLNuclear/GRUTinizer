@@ -118,7 +118,7 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   //std::cout << "-------------------------------------------------" << std::endl;
   //std::cout << raw << std::endl;
   Clear();
-
+ 
   fTimeStamp = raw.timestamp;
   fT0 = raw.t0;
   fCrystalId = raw.crystal_id;
@@ -551,6 +551,8 @@ void TGretinaHit::Print(Option_t *opt) const {
 
 void TGretinaHit::Clear(Option_t *opt) {
   TDetectorHit::Clear(opt);
+
+  fPad = 0;
 
   fTimeStamp      = -1;
   fT0 = sqrt(-1);
