@@ -33,7 +33,12 @@ class TInteractionPoint {
                                           //                                  fLPosition.Y(),
                                           //                                  fLPosition.Z()); }
     TVector3 GetLocalPosition() const { return fLPosition; }
-  
+
+    void SetOrder(int o)     { fOrder=o; }
+    void SetAssignE(float e) { fAssignedEng = e; }
+
+    void Print(Option_t *opt="") const;
+
   private:
     int   fSegNum;
     float fEng;          // energy as recorded by preamp.  energy in mode2 format
@@ -86,7 +91,7 @@ public:
   double GetY() const { return GetPosition().Y(); }
   double GetZ() const { return GetPosition().Z(); }
 
-  double GetPhi() {
+  double GetPhi() const {
     double phi = GetPosition().Phi();
     if(phi<0) {
       return TMath::TwoPi()+phi;
@@ -117,6 +122,20 @@ public:
   TVector3 GetLocalIntPosition(int i) const { return GetInteractionPoint(i).GetLocalPosition(); }
   
   void   SetCoreEnergy(float temp) const { fCoreEnergy = temp; }
+
+  double GetIntMag(int i)      const { return GetIntPosition(i).Mag(); }
+  double GetIntTheta(int i)    const { return GetIntPosition(i).Theta(); } 
+  double GetIntThetaDeg(int i) const { return GetIntTheta(i)*TMath::RadToDeg(); }
+  double GetIntPhi(int i) const {
+    double phi = GetIntPosition(i).Phi();
+    if(phi<0) {
+      return TMath::TwoPi()+phi;
+    } else {
+      return phi;
+    }
+  }
+  double GetIntPhiDeg(int i) const { return GetIntPhi(i)*TMath::RadToDeg(); }
+
 
 
 //private:

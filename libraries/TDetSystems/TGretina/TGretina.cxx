@@ -304,29 +304,44 @@ void TGretina::Print(Option_t *opt) const {
   printf(BLUE "--------------------------------" RESET_COLOR "\n");
 }
 
-/*
+
 void TGretina::PrintInteractions(Option_t *opt) const {
   int ndet = Size();
+  double sum=0.0;
+  std::vector<TVector3> vecs;
+  
   for(int x=0;x<ndet;x++) {
     TGretinaHit hit = GetGretinaHit(x);
     //printf("xtal[%03i] ",hit.GetCrystalId());
     int nint = hit.Size();
+    sum += hit.GetCoreEnergy();
     for(int y=0;y<nint;y++) {
-      //float ieng = hit.GetInteractionEng(y);
-      //float ifrac = hit.GetInteractionFrac(y);
-      float iper = hit.GetInteractionPercentage(y);
-      TVector3 ip = hit.GetInteractionPosition(y);
+      //float ieng    = hit.GetIntPreampEng(y);
+      //float idecomp = hit.GetIntDecompEng(y);
+      float iassign = hit.GetIntAssignEng(y);
+      //TVector3 ip = hit.GetIntPosition(y);
       //printf("xtal[%03i]  %.1f / %.1f / %.1f / %.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
-      printf("xtal[%03i] %.1f / %.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
+      vecs.push_back(hit.GetIntPosition(y));
+      printf("xtal[%03i] %\ 4.1f / %\ 4.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
           hit.GetCrystalId(),
           //ifrac,ieng,iper,hit.GetCoreEnergy(),
-          iper,hit.GetCoreEnergy(),
-          hit.GetSegmentId(y),ip.X(),ip.Y(),ip.Z());
+          iassign,hit.GetCoreEnergy(),
+          hit.GetSegmentId(y),//
+          hit.GetIntMag(y),hit.GetIntThetaDeg(y),hit.GetIntPhiDeg(y));
+          //ip.X(),ip.Y(),ip.Z());
     }
   }
-  printf("--------------------\n");
+  printf("----  %i det w/  %.1f ------\n",ndet,sum);
+  printf("------------------------------\n");
+  for(int x=0;x<vecs.size();x++) {
+    for(int y=0;y<vecs.size();y++) {
+      if(x==y) continue;
+      printf("\t [%i, %i]  angle: %.1f\n",x,y,vecs.at(x).Angle(vecs.at(y))*TMath::RadToDeg());
+    }
+  }
+
 }
-*/
+
 
 void TGretina::SortHits() {
   std::sort(gretina_hits.begin(),gretina_hits.end());

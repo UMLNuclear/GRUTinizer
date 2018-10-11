@@ -23,7 +23,7 @@ public:
 
   virtual void Copy(TObject& obj) const;
   virtual void Print(Option_t *opt = "") const;
-  //virtual void PrintInteractions(Option_t *opt = "") const;
+  virtual void PrintInteractions(Option_t *opt = "") const;
   virtual void Clear(Option_t *opt = "");
 
   virtual UInt_t Size() const { return gretina_hits.size(); }

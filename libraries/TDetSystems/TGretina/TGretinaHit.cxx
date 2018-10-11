@@ -11,6 +11,7 @@
 #include "TGretina.h"
 //#include "TS800.h"
 
+/*
 struct interaction_point {
   interaction_point(int segnum, TVector3 pos,TVector3 loc,float energy,float fraction,float assigned)
     : segnum(segnum), pos(pos),local_pos(loc), energy(energy), energy_fraction(fraction), energy_assigned(assigned) { }
@@ -34,7 +35,7 @@ struct interaction_point {
     return segnum < other.segnum;
   }
 };
-
+*/
 
 
 
@@ -44,7 +45,11 @@ TVector3 TInteractionPoint::GetPosition(int xtal) const { return TGretina::Cryst
                                                                             fLPosition.Z()); }
 
 
-
+void TInteractionPoint::Print(Option_t *opt) const { 
+  TVector3 lv = GetLocalPosition();
+  printf("seg[%02i]   %.1f / %.1f   [ %.1f, %.1f. %.1f]\n",
+          GetSegNum(),GetAssignE(),GetPreampE(),lv.X(),lv.Y(),lv.Z());
+}
 
 
 
@@ -124,8 +129,6 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   fCrystalId = raw.crystal_id;
   fCoreEnergy = raw.tot_e;
 
-  //fAddress = (1<<24) + (fCrystalId<<16);
-  //fAddress = (1<<24) + ( raw.board_id );
   int board_id = ((fCrystalId/4) << 8) ;  //hole  number : 0x1f00
   //    board_id =                       ;  //card  number : 0x0030  information not available here.
   board_id += ((fCrystalId%4) << 6) ;  //x-tal number : 0x00c0
@@ -143,47 +146,25 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   //float first_interaction_value  = fFirstInteraction;//sqrt(-1);
   //float second_interaction_value = sqrt(-1);
 
+  int order_counter=0;
+  float decomp_sum =0.0;
   for(int i=0; i<fNumberOfInteractions; i++) {
     int   seg  = raw.intpts[i].seg;
     float eng  = raw.intpts[i].seg_ener;
     float frac = raw.intpts[i].e;
+    
     TVector3 lpos = TVector3(raw.intpts[i].x,raw.intpts[i].y,raw.intpts[i].z);
-
+    
     TInteractionPoint intpt(seg,eng,frac,lpos);
+    
+    intpt.SetOrder(order_counter++);
+    decomp_sum += intpt.GetDecompE();
     fInteractions.push_back(intpt);
-
-
-    /*
-    //fSegmentNumber[i] = 36*fCrystalId + raw.intpts[i].seg;
-    //printf("[%02i] : seg[%02i] = %.02f\n",i,raw.intpts[i].seg,raw.intpts[i].seg_ener); fflush(stdout);
-    fSegmentNumber.push_back(raw.intpts[i].seg);
-    fGlobalInteractionPosition.push_back(TGretina::CrystalToGlobal(fCrystalId,
-          raw.intpts[i].x,
-          raw.intpts[i].y,
-          raw.intpts[i].z));
-    fLocalInteractionPosition.push_back(TVector3(raw.intpts[i].x,
-          raw.intpts[i].y,
-          raw.intpts[i].z));
-
-    float seg_ener = raw.intpts[i].seg_ener;
-    float seg_frac = raw.intpts[i].e;
-    fInteractionEnergy.push_back(seg_ener);
-    fInteractionFraction.push_back(seg_frac);
-
-    // fFirstInteraction = i;
-    if(seg_ener >= first_interaction_value){
-      second_interaction_value = first_interaction_value;
-      first_interaction_value = seg_ener;
-      fSecondInteraction = fFirstInteraction;
-      fFirstInteraction = i;
-    } else if(seg_ener > second_interaction_value){
-      fSecondInteraction = i;
-      second_interaction_value = seg_ener;
-    }
-   */ 
   }
-  //  SortHits();   //removes double interactions, sorts segments by energy
-  //  Print("all");
+  //now that the interactions are set, assign energy fractions based of of core - 
+  for(int i=0;i<fNumberOfInteractions;i++) {
+    fInteractions[i].SetAssignE((fInteractions[i].GetDecompE()/decomp_sum)*GetCoreEnergy());
+  }
 
 }
 
