@@ -37,7 +37,18 @@ struct interaction_point {
 };
 */
 
+TInteractionPoint::TInteractionPoint(const TInteractionPoint &IP) {                       
+  this->Copy(IP);
+}
 
+void TInteractionPoint::Copy(const TInteractionPoint &IP) {
+  fSegNum      = IP.GetSegNum();
+  fEng         = IP.GetPreampE();
+  fDecompEng   = IP.GetDecompE();
+  fAssignedEng = IP.GetAssignE();
+  fOrder       = IP.GetOrder();
+  fLPosition   = IP.GetLocalPosition();
+}
 
 TVector3 TInteractionPoint::GetPosition(int xtal) const { return TGretina::CrystalToGlobal(xtal,
                                                                             fLPosition.X(),

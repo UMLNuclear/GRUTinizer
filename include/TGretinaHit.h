@@ -15,28 +15,27 @@
 #define MAXHPGESEGMENTS 36
 
 class TSmartBuffer;
-class TInteractionPoint {
 
+
+class TInteractionPoint {
   public:
     TInteractionPoint() { } 
+    TInteractionPoint(const TInteractionPoint &IP);
     TInteractionPoint(int seg,float eng,float frac,TVector3 lpos) :
-                       fSegNum(seg),fEng(eng),fDecompEng(frac),fLPosition(lpos) { }
+                      fSegNum(seg),fEng(eng),fDecompEng(frac),fLPosition(lpos) { }
     virtual ~TInteractionPoint() { }
+   
+    virtual void Copy(const TInteractionPoint&);
 
-    int   GetSegNum()  const { return fSegNum;    }
-    float GetPreampE() const { return fEng;       }
-    float GetDecompE() const { return fDecompEng; }
-    float GetAssignE() const { return fAssignedEng; }
-    int   GetOrder()   const { return fOrder; } 
-    TVector3 GetPosition(int xtal) const; // { return TGretina::CrystalToGlobal(xtal,
-                                          //                                  fLPosition.X(),
-                                          //                                  fLPosition.Y(),
-                                          //                                  fLPosition.Z()); }
-    TVector3 GetLocalPosition() const { return fLPosition; }
-
+    virtual int   GetSegNum()              const { return fSegNum;    }
+    virtual float GetPreampE()             const { return fEng;       }
+    virtual float GetDecompE()             const { return fDecompEng; }
+    virtual float GetAssignE()             const { return fAssignedEng; }
+    virtual int   GetOrder()               const { return fOrder; } 
+    virtual TVector3 GetPosition(int xtal) const; // { return TGretina::CrystalToGlobal(xtal,
+    TVector3 GetLocalPosition()            const { return fLPosition; }
     void SetOrder(int o)     { fOrder=o; }
     void SetAssignE(float e) { fAssignedEng = e; }
-
     void Print(Option_t *opt="") const;
 
   private:
@@ -179,6 +178,45 @@ public:
 
   ClassDef(TGretinaHit,6)
 };
+
+
+
+class TClusterPoint : public TInteractionPoint {
+  public:
+    TClusterPoint()  { } 
+    TClusterPoint(TGretinaHit &hit, TInteractionPoint &ip) { 
+      fXtalId    = hit.GetCrystalId();  
+      fTimestamp = hit.GetTimestamp();  
+      fT0        = hit.GetT0();  
+      fPad       = hit.GetPad();  
+      this->Copy(ip);   
+    } 
+    ~TClusterPoint() { } 
+
+    TVector3 GetPosition() const { return TInteractionPoint::GetPosition(fXtalId); }
+
+    double GetEnergy()    const { return TInteractionPoint::GetAssignE(); }
+
+    long   GetTimestamp() const { return fTimestamp;                  }
+    double GetTime()      const { return ((double)fTimestamp) - fT0;  }
+    int    GetPad()       const { return fPad;                        }
+
+
+  private:
+    int   fXtalId;
+    long  fTimestamp;
+    float fT0;
+    int   fPad;
+  ClassDef(TClusterPoint,1);
+
+}; 
+
+
+
+
+
+
+
 
 
 #endif

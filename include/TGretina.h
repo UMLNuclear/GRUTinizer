@@ -8,12 +8,8 @@
 #include <TObject.h>
 #include <TMath.h>
 
-#include <TClonesArray.h>
-
 #include "TDetector.h"
 #include "TGretinaHit.h"
-
-
 
 class TGretina : public TDetector {
 
@@ -50,6 +46,13 @@ public:
   //static void DrawEnVsTheta(Double_t Beta=0.1,Option_t *gate="",Option_t *opt="",Long_t entries=kMaxLong,TChain *chain=0);
   //static void DrawCoreSummary(Option_t *gate="",Option_t *opt="",Long_t entries=kMaxLong,TChain *chain=0);
 
+
+
+  static double ComptonAngle(double eoriginal,double escatterer);
+  static double ComptonEnergy(double eoriginal,double theta);
+
+
+
   
 #ifndef __CINT__ 
   static void SetAddbackCondition(std::function<bool(const TGretinaHit&,const TGretinaHit&)> condition) {
@@ -85,7 +88,38 @@ private:
 };
 
 
+class TCluster { 
+  public:
+    TCluster()  { Clear(); }
+    ~TCluster() {          }
 
+    int  Size() const { return fClusterPoints.size(); }
+    void Clear(Option_t *opt="") {
+      fEnergySum = 0.00;
+      fCenterOfMass.SetXYZ(0,0,0);
+      fClusterPoints.clear();
+    }
+    void Add(TClusterPoint &cp)    { 
+      if(Size()==0) {
+        fCenterOfMass = cp.GetPosition(); 
+      } else {
+        double esum = fEnergySum + cp.GetEnergy();
+        double x = (fCenterOfMass.X()*fEnergySum  + cp.GetPosition().X()*cp.GetEnergy())/esum;
+        double y = (fCenterOfMass.Y()*fEnergySum  + cp.GetPosition().Y()*cp.GetEnergy())/esum;
+        double z = (fCenterOfMass.Z()*fEnergySum  + cp.GetPosition().Z()*cp.GetEnergy())/esum;
+        fCenterOfMass.SetXYZ(x,y,z);
+      }
+      fEnergySum+=cp.GetEnergy();
+      fClusterPoints.push_back(TClusterPoint(cp)); 
+    }
+    TClusterPoint Get(int i) const { return fClusterPoints.at(i); }
 
+  private:
+    double   fEnergySum;
+    TVector3 fCenterOfMass; 
+    std::vector<TClusterPoint> fClusterPoints; 
+
+  ClassDef(TCluster,1)  
+};
 
 #endif

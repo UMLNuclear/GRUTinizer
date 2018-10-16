@@ -20,4 +20,8 @@
 #pragma link C++ class std::vector<TMode1Hit>+;
 #pragma link C++ class TMode1+;
 
+#pragma link C++ class TCluster+;
+#pragma link C++ class TClusterPoint+;
+#pragma link C++ class std::vector<TClusterPoint>+;
+
 #endif

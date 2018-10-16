@@ -336,7 +336,10 @@ void TGretina::PrintInteractions(Option_t *opt) const {
   for(int x=0;x<vecs.size();x++) {
     for(int y=0;y<vecs.size();y++) {
       if(x==y) continue;
-      printf("\t [%i, %i]  angle: %.1f\n",x,y,vecs.at(x).Angle(vecs.at(y))*TMath::RadToDeg());
+      double cluster_angle = vecs.at(x).Angle(vecs.at(y))*TMath::RadToDeg();
+      //the compton angle should be the angle v1 and v2-v1, this points to v2...
+      double compton_angle = vecs.at(x).Angle(vecs.at(y)-vecs.at(x))*TMath::RadToDeg();
+      printf("\t [%i, %i]  angle: %.1f\t cangle: %.1f\tcompton: %.1f \n",x,y,cluster_angle,compton_angle,ComptonEnergy(sum,compton_angle));
     }
   }
 
@@ -453,3 +456,19 @@ void TGretina::DrawCoreSummary(Option_t *gate,Option_t *opt,Long_t nentries,TCha
   h->Draw(opt);
 }
 */
+
+
+double TGretina::ComptonAngle(double eoriginal,double escatterer) {
+  return 0;
+
+}
+
+
+double TGretina::ComptonEnergy(double eoriginal,double theta) {
+  double temp = 1 + (eoriginal/511.)*(1-TMath::Cos(theta*TMath::DegToRad()));
+  return eoriginal *(1/temp);
+}
+
+
+
+
