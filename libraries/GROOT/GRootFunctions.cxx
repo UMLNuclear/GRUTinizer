@@ -335,6 +335,7 @@ Double_t GRootFunctions::Polarization(Double_t *x,Double_t *par) {
 
 
 Double_t GRootFunctions::ComptonEnergy(Double_t *x,Double_t *par) {
+  //x[0]   = scattering angle, in degrees....
   //par[0] = inital gamma energy; in keV.
   double lower = 1 + (par[0]/511.)*(1-TMath::Cos(TMath::DegToRad()*x[0]));
   return par[0]/lower;
@@ -342,6 +343,7 @@ Double_t GRootFunctions::ComptonEnergy(Double_t *x,Double_t *par) {
 }
 
 Double_t GRootFunctions::ComptonAngle(Double_t *x,Double_t *par) {
+  //x[0]   = scattered gamma energy in keV.
   //par[0] = inital gamma energy; in keV.
   if(x[0]>par[0])
     return 0.00;

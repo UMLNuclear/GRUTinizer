@@ -174,7 +174,13 @@ void TGretinaHit::BuildFrom(TSmartBuffer& buf){
   }
   //now that the interactions are set, assign energy fractions based of of core - 
   for(int i=0;i<fNumberOfInteractions;i++) {
-    fInteractions[i].SetAssignE((fInteractions[i].GetDecompE()/decomp_sum)*GetCoreEnergy());
+    //fInteractions[i].SetAssignE((fInteractions[i].GetDecompE()/decomp_sum)*GetCoreEnergy());
+    double energy = (fInteractions[i].GetDecompE()/decomp_sum)*GetCoreEnergy();
+    if(energy>0.0) { // get home antiphoton, you're drunk.
+      fInteractions[i].SetAssignE((fInteractions[i].GetDecompE()/decomp_sum)*GetCoreEnergy());
+    } else {
+      fInteractions[i].SetAssignE(0.00);
+    }
   }
 
 }

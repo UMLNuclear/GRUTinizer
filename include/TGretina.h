@@ -5,11 +5,15 @@
 #include <functional>
 #endif
 
+#include <set>
+
 #include <TObject.h>
 #include <TMath.h>
 
 #include "TDetector.h"
 #include "TGretinaHit.h"
+
+#include "GRootFunctions.h"
 
 #define CLUSTER_ANGLE 0.383972
 //22 degrees in rad. 
@@ -42,9 +46,30 @@ class TCluster {
     TVector3 GetPosition()   const { return fCenterOfMass; }
     
     void Print(Option_t *opt="") const {
-      printf("------Cluster at "); fCenterOfMass.Print(opt); 
+      printf("---- %6.1f-keV Cluster at ",GetEnergy()); fCenterOfMass.Print(opt); 
+      
       for(int x=0;x<Size();x++) {
         printf("\t");  fClusterPoints.at(x).Print(opt);
+      }
+      printf("\n");
+      for(int x=0;x<Size();x++) {
+        for(int y=0;y<Size();y++) {
+          if(x==y) continue;
+          TVector3 v1 = fClusterPoints.at(x).GetPosition();
+          TVector3 v2 = fClusterPoints.at(y).GetPosition();
+          double scattered_energy = GetEnergy() - fClusterPoints.at(x).GetEnergy();
+          double total_energy = GetEnergy();
+          double scattered_angle  = v1.Angle(v2-v1) * TMath::RadToDeg(); // 1 -  (2-1)
+
+          double calculated_angle  = GRootFunctions::ComptonAngle(&scattered_energy,&total_energy);  // i am in degrees!
+          double calculated_energy  = GRootFunctions::ComptonEnergy(&scattered_angle,&total_energy);  // i am in degrees!
+          
+          double fom = fabs(scattered_angle-calculated_angle)/
+          
+          printf("[%i][%i] angle %3.1f / %3.1f = %2.1f    \t  energy %4.1f / %4.1f = %4.1f \n",x,y,
+                                               scattered_angle,calculated_angle,scattered_angle/calculated_angle,
+                                               scattered_energy,calculated_energy,scattered_energy/calculated_energy);
+        }
       }
     }
 
@@ -62,13 +87,28 @@ class TCluster {
         }
       }
     }
+ 
+    double GetEnergy() const { return fEnergySum; }
+    
+    int UniqueXtals() const { 
+      std::set<int> xtal; 
+      for(unsigned int x=0;x<fClusterPoints.size();x++) xtal.insert(fClusterPoints.at(x).GetXtal());
+      return xtal.size();
+    }
+    int GetXtal(int i=0)  const { return fClusterPoints.at(i).GetXtal(); }
+    int GetWedge(int i=0) const { return fClusterPoints.at(i).GetWedge(); }
+
+    TClusterPoint GetPoint(int i) const { return fClusterPoints.at(i); }
 
   private:
     double   fEnergySum;
+    double fFOM_FEP;
+    double fFOM_Order;
+    
     TVector3 fCenterOfMass; 
     std::vector<TClusterPoint> fClusterPoints; 
 
-  ClassDef(TCluster,1)  
+  ClassDef(TCluster,22)  
 };
 
 
@@ -140,10 +180,13 @@ public:
   void  SortHits();
 
   int  BuildAddback(int EngRange=-1) const;
+  
   int  BuildClusters() const;
-
   void PrintClusters(Option_t *opt="") const;
   void CompressClusters() { for(unsigned int x=0;x<clusters.size();x++) clusters[x].CompressInteractions(); }
+  
+  int       ClusterSize()     const { return clusters.size(); }
+  TCluster &GetCluster(int i) const { return clusters.at(i);  } 
 
 private:
 #ifndef __CINT__ 

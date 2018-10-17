@@ -4,7 +4,8 @@
 #include <sstream>
 
 #include "TGretina.h"
-#include "GRootCommands.h"
+//#include "GRootCommands.h"
+#include "GRootFunctions.h"
 #include <TPad.h>
 #include <TROOT.h>
 
@@ -357,6 +358,7 @@ void TGretina::Clear(Option_t *opt) {
   TDetector::Clear(opt);
   gretina_hits.clear();
   addback_hits.clear();
+  clusters.clear();
 }
 
 /*
@@ -484,9 +486,11 @@ int TGretina::BuildClusters() const {
     }
   }
   //sort the cluster_points?  energy, theta, phi, id ? i dunno.
-  for(unsigned int x=0;x<cluster_points.size();x++) {
-    cluster_points.at(x).Print();
-  }
+  //for(unsigned int x=0;x<cluster_points.size();x++) {
+  //  cluster_points.at(x).Print();
+  //}
+  
+  
   // 2) lets now compare the cluster_points and build clusters....
   if(cluster_points.size()<1) return 0;
   clusters.push_back(TCluster());  
@@ -512,6 +516,13 @@ int TGretina::BuildClusters() const {
     //p_it = cluster_points.erase(p_it);
    // printf("\n");
   }
+  
+  
+  //3  ok, now - ideally - we would "track" the clusters.
+  //    -- can we order the interactions?
+  //    -- do the interactions reproduce a FEP? 
+
+
 
   return clusters.size();
 }

@@ -224,8 +224,6 @@ class TClusterPoint : public TInteractionPoint {
       SetAssignE(GetAssignE()+other.GetAssignE());
       if(fPad<other.GetPad()) { fPad = other.GetPad(); }
     }
-    
-
     bool operator==(const TClusterPoint &rhs) const { return ((GetXtal()==rhs.GetXtal()) && (GetSegNum()==rhs.GetSegNum())); }
 
   private:
