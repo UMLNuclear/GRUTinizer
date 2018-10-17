@@ -52,25 +52,37 @@ class TCluster {
         printf("\t");  fClusterPoints.at(x).Print(opt);
       }
       printf("\n");
+      double fom_best = 0.0;
       for(int x=0;x<Size();x++) {
         for(int y=0;y<Size();y++) {
           if(x==y) continue;
           TVector3 v1 = fClusterPoints.at(x).GetPosition();
           TVector3 v2 = fClusterPoints.at(y).GetPosition();
           double scattered_energy = GetEnergy() - fClusterPoints.at(x).GetEnergy();
-          double total_energy = GetEnergy();
+          double total_energy     = GetEnergy();
           double scattered_angle  = v1.Angle(v2-v1) * TMath::RadToDeg(); // 1 -  (2-1)
 
           double calculated_angle  = GRootFunctions::ComptonAngle(&scattered_energy,&total_energy);  // i am in degrees!
           double calculated_energy  = GRootFunctions::ComptonEnergy(&scattered_angle,&total_energy);  // i am in degrees!
-          
-          double fom = fabs(scattered_angle-calculated_angle)/
-          
-          printf("[%i][%i] angle %3.1f / %3.1f = %2.1f    \t  energy %4.1f / %4.1f = %4.1f \n",x,y,
+        
+          double kn = GRootFunctions::KN_unpol_theta(&scattered_angle,&total_energy);
+
+          //double fom = fabs(scattered_angle-calculated_angle)/
+          double e_ratio = scattered_energy/calculated_energy;
+          double a_ratio = scattered_angle/calculated_angle;
+          double fom     = (e_ratio+a_ratio)/2.; 
+
+          if(fabs(1-fom)  < fabs(1-fom_best)) { fom_best = fom; }
+
+
+          printf("[%i][%i] angle %3.1f / %3.1f = %2.4f    \t  energy %4.1f / %4.1f = %4.4f   fom:  %2.4f   KN:  %f\n",x,y,
                                                scattered_angle,calculated_angle,scattered_angle/calculated_angle,
-                                               scattered_energy,calculated_energy,scattered_energy/calculated_energy);
+                                               scattered_energy,calculated_energy,scattered_energy/calculated_energy,fom,kn);
         }
       }
+
+      printf("best fom for the cluster is %2.4f\n",fom_best); 
+
     }
 
     void CompressInteractions() { 
@@ -99,11 +111,17 @@ class TCluster {
     int GetWedge(int i=0) const { return fClusterPoints.at(i).GetWedge(); }
 
     TClusterPoint GetPoint(int i) const { return fClusterPoints.at(i); }
-
+ 
+    double GetFOM() const { return fFOM; }
+    void   SetFOM(double fom) { fFOM=fom; }
+    
+    double GetKN() const { return fKN; }
+    void   SetKN(double kn) { fKN=kn; }
+ 
   private:
-    double   fEnergySum;
-    double fFOM_FEP;
-    double fFOM_Order;
+    double fEnergySum;
+    double fFOM;
+    double fKN;
     
     TVector3 fCenterOfMass; 
     std::vector<TClusterPoint> fClusterPoints; 

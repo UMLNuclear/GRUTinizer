@@ -34,7 +34,7 @@ bool    TGretina::fCRMATSet = false;
 bool DefaultAddback(const TGretinaHit& one,const TGretinaHit &two) {
   TVector3 res = one.GetPosition()-two.GetPosition(); //one.GetLastPosition()-two.GetPosition();
   return ((std::abs(one.GetTime()-two.GetTime()) < 44.0) &&
-            (res.Mag() < 80.0) ) ;
+      (res.Mag() < 80.0) ) ;
 }
 
 std::function<bool(const TGretinaHit&,const TGretinaHit&)> TGretina::fAddbackCondition = DefaultAddback;
@@ -55,11 +55,11 @@ int TGretina::BuildAddback(int EngRange) const {
     }
   }
 
-  
+
   std::sort(addback_hits.begin(), addback_hits.end(),
-	    [](const TGretinaHit& a, const TGretinaHit& b) {
-	      return a.GetCoreEnergy() > b.GetCoreEnergy();
-	    });
+      [](const TGretinaHit& a, const TGretinaHit& b) {
+      return a.GetCoreEnergy() > b.GetCoreEnergy();
+      });
 
   for(unsigned int i=0; i<addback_hits.size(); i++) {
     TGretinaHit& current_hit = addback_hits[i];
@@ -67,8 +67,8 @@ int TGretina::BuildAddback(int EngRange) const {
     for(unsigned int j=i+1; j<addback_hits.size(); j++) {
       TGretinaHit& other_hit = addback_hits[j];
       if(fAddbackCondition(current_hit, other_hit)) {
-	//current_hit.AddToSelf(other_hit);
-	to_erase.push_back(j);
+        //current_hit.AddToSelf(other_hit);
+        to_erase.push_back(j);
       }
     }
 
@@ -172,7 +172,7 @@ void TGretina::SetSegmentCRMAT() {
     m_segpos[(type+1)%2][seg][2] = z;
     seg++;
   }
-  
+
   infile.close();
   //fclose(infile);
 }
@@ -189,7 +189,7 @@ TVector3 TGretina::GetSegmentPosition(int cry_id,int segment) {
 TVector3 TGretina::GetCrystalPosition(int cry_id) {
   SetCRMAT();
   //return CrystalToGlobal(cry_id,0.0,0.0,0.0); 
-  
+
   TVector3 v;
   v.SetXYZ(0.0,0.0,0.0);
   for(int i=30;i<36;i++) {
@@ -198,7 +198,7 @@ TVector3 TGretina::GetCrystalPosition(int cry_id) {
   }
   v.SetXYZ(v.X()/6.0,v.Y()/6.0,v.Z()/6.0);
   return v;      
-  
+
 }
 
 void TGretina::Copy(TObject& obj) const {
@@ -244,57 +244,57 @@ TVector3 TGretina::CrystalToGlobal(int cryId,Float_t x,Float_t y,Float_t z) {
      source of the mapping, you might need to convert from mm
      (if you read from crmat.linux). */
   double xl = ( (crmat[detectorPosition][crystalNumber][0][0] * x) +
-                (crmat[detectorPosition][crystalNumber][0][1] * y) +
-                (crmat[detectorPosition][crystalNumber][0][2] * z) +
-                (crmat[detectorPosition][crystalNumber][0][3]) );
+      (crmat[detectorPosition][crystalNumber][0][1] * y) +
+      (crmat[detectorPosition][crystalNumber][0][2] * z) +
+      (crmat[detectorPosition][crystalNumber][0][3]) );
 
   double yl = ( (crmat[detectorPosition][crystalNumber][1][0] * x) +
-                (crmat[detectorPosition][crystalNumber][1][1] * y) +
-                (crmat[detectorPosition][crystalNumber][1][2] * z) +
-                (crmat[detectorPosition][crystalNumber][1][3]) );
+      (crmat[detectorPosition][crystalNumber][1][1] * y) +
+      (crmat[detectorPosition][crystalNumber][1][2] * z) +
+      (crmat[detectorPosition][crystalNumber][1][3]) );
 
   double zl = ( (crmat[detectorPosition][crystalNumber][2][0] * x) +
-                (crmat[detectorPosition][crystalNumber][2][1] * y) +
-                (crmat[detectorPosition][crystalNumber][2][2] * z) +
-                (crmat[detectorPosition][crystalNumber][2][3]) );
+      (crmat[detectorPosition][crystalNumber][2][1] * y) +
+      (crmat[detectorPosition][crystalNumber][2][2] * z) +
+      (crmat[detectorPosition][crystalNumber][2][3]) );
 
   return TVector3(xl, yl, zl);
 }
 
 /*
-void TGretina::BuildAddbackHits(){
-  if(Size()==0)
-    return;
+   void TGretina::BuildAddbackHits(){
+   if(Size()==0)
+   return;
 
-  addback_hits->Clear();
-  TGretinaHit *newhit = (TGretinaHit*)addback_hits->ConstructedAt(0);
-  GetHit(0).Copy(*newhit);
+   addback_hits->Clear();
+   TGretinaHit *newhit = (TGretinaHit*)addback_hits->ConstructedAt(0);
+   GetHit(0).Copy(*newhit);
 
-  if(Size()==1)
-    return;
+   if(Size()==1)
+   return;
 
-  std::vector<double> max_energies;
-  max_energies.push_back(newhit->GetCoreEnergy());
+   std::vector<double> max_energies;
+   max_energies.push_back(newhit->GetCoreEnergy());
 
-  for(int x=1;x<Size();x++) {
+   for(int x=1;x<Size();x++) {
 
-    bool used = false;
-    for(int y=0;y<addback_hits->GetEntries();y++) {
-      if(GetAddbackHit(y).CheckAddback(GetGretinaHit(x))) {
-        used = true;
-        GetAddbackHit(y).AddToSelf(GetGretinaHit(x), max_energies[y]);
-        break;
-      }
-    }
+   bool used = false;
+   for(int y=0;y<addback_hits->GetEntries();y++) {
+   if(GetAddbackHit(y).CheckAddback(GetGretinaHit(x))) {
+   used = true;
+   GetAddbackHit(y).AddToSelf(GetGretinaHit(x), max_energies[y]);
+   break;
+   }
+   }
 
-    if(!used) {
-      TGretinaHit *tmphit = (TGretinaHit*)addback_hits->ConstructedAt(addback_hits->GetEntries());
-      GetGretinaHit(x).Copy(*tmphit);
-      max_energies.push_back(newhit->GetCoreEnergy());
-    }
-  }
-}
-*/
+   if(!used) {
+   TGretinaHit *tmphit = (TGretinaHit*)addback_hits->ConstructedAt(addback_hits->GetEntries());
+   GetGretinaHit(x).Copy(*tmphit);
+   max_energies.push_back(newhit->GetCoreEnergy());
+   }
+   }
+   }
+   */
 
 void TGretina::Print(Option_t *opt) const {
   printf(BLUE "GRETINA: size = %i" RESET_COLOR "\n",Size());
@@ -310,43 +310,43 @@ void TGretina::Print(Option_t *opt) const {
 void TGretina::PrintInteractions(Option_t *opt) const {
   opt=opt;
   /*
-  int ndet = Size();
-  double sum=0.0;
-  std::vector<TVector3> vecs;
-  
-  for(int x=0;x<ndet;x++) {
-    TGretinaHit hit = GetGretinaHit(x);
-    //printf("xtal[%03i] ",hit.GetCrystalId());
-    int nint = hit.Size();
-    sum += hit.GetCoreEnergy();
-    for(int y=0;y<nint;y++) {
-      //float ieng    = hit.GetIntPreampEng(y);
-      //float idecomp = hit.GetIntDecompEng(y);
-      float iassign = hit.GetIntAssignEng(y);
-      //TVector3 ip = hit.GetIntPosition(y);
-      //printf("xtal[%03i]  %.1f / %.1f / %.1f / %.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
-      vecs.push_back(hit.GetIntPosition(y));
-      printf("xtal[%03i] %\ 4.1f / %\ 4.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
-          hit.GetCrystalId(),
-          //ifrac,ieng,iper,hit.GetCoreEnergy(),
-          iassign,hit.GetCoreEnergy(),
-          hit.GetSegmentId(y),//
-          hit.GetIntMag(y),hit.GetIntThetaDeg(y),hit.GetIntPhiDeg(y));
-          //ip.X(),ip.Y(),ip.Z());
-    }
+     int ndet = Size();
+     double sum=0.0;
+     std::vector<TVector3> vecs;
+
+     for(int x=0;x<ndet;x++) {
+     TGretinaHit hit = GetGretinaHit(x);
+  //printf("xtal[%03i] ",hit.GetCrystalId());
+  int nint = hit.Size();
+  sum += hit.GetCoreEnergy();
+  for(int y=0;y<nint;y++) {
+  //float ieng    = hit.GetIntPreampEng(y);
+  //float idecomp = hit.GetIntDecompEng(y);
+  float iassign = hit.GetIntAssignEng(y);
+  //TVector3 ip = hit.GetIntPosition(y);
+  //printf("xtal[%03i]  %.1f / %.1f / %.1f / %.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
+  vecs.push_back(hit.GetIntPosition(y));
+  printf("xtal[%03i] %\ 4.1f / %\ 4.1f  seg[%02i]:[ %.1f, %.1f, %.1f ] \n",
+  hit.GetCrystalId(),
+  //ifrac,ieng,iper,hit.GetCoreEnergy(),
+  iassign,hit.GetCoreEnergy(),
+  hit.GetSegmentId(y),//
+  hit.GetIntMag(y),hit.GetIntThetaDeg(y),hit.GetIntPhiDeg(y));
+  //ip.X(),ip.Y(),ip.Z());
+  }
   }
   printf("----  %i det w/  %.1f ------\n",ndet,sum);
   printf("------------------------------\n");
   for(int x=0;x<vecs.size();x++) {
-    for(int y=0;y<vecs.size();y++) {
-      if(x==y) continue;
-      double cluster_angle = vecs.at(x).Angle(vecs.at(y))*TMath::RadToDeg();
-      //the compton angle should be the angle v1 and v2-v1, this points to v2...
-      double compton_angle = vecs.at(x).Angle(vecs.at(y)-vecs.at(x))*TMath::RadToDeg();
-      printf("\t [%i, %i]  angle: %.1f\t cangle: %.1f\tcompton: %.1f \n",x,y,cluster_angle,compton_angle,ComptonEnergy(sum,compton_angle));
-    }
+  for(int y=0;y<vecs.size();y++) {
+  if(x==y) continue;
+  double cluster_angle = vecs.at(x).Angle(vecs.at(y))*TMath::RadToDeg();
+  //the compton angle should be the angle v1 and v2-v1, this points to v2...
+  double compton_angle = vecs.at(x).Angle(vecs.at(y)-vecs.at(x))*TMath::RadToDeg();
+  printf("\t [%i, %i]  angle: %.1f\t cangle: %.1f\tcompton: %.1f \n",x,y,cluster_angle,compton_angle,ComptonEnergy(sum,compton_angle));
   }
-*/
+  }
+  */
 }
 
 
@@ -362,79 +362,79 @@ void TGretina::Clear(Option_t *opt) {
 }
 
 /*
-void TGretina::DrawDopplerGamma(Double_t Beta,Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
-  TString OptString = opt;
-  if(!chain)
-    chain = gChain;
-  if(!chain || !chain->GetBranch("TGretina"))
-    return;
-  if(!gPad || !gPad->IsEditable()){
-    gROOT->MakeDefCanvas();
-  }else{
-    gPad->GetCanvas()->Clear();
-  }
-  std::string name  = Form("%s_Gammas",Class()->GetName());
-  std::string title = Form("%s Gamma 1-D",Class()->GetName());
-  GH1D *h = (GH1D*)gROOT->FindObject(name.c_str());
-  if(!h)
-    h = new GH1D(name.c_str(),title.c_str(),4000,0,8000);
+   void TGretina::DrawDopplerGamma(Double_t Beta,Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
+   TString OptString = opt;
+   if(!chain)
+   chain = gChain;
+   if(!chain || !chain->GetBranch("TGretina"))
+   return;
+   if(!gPad || !gPad->IsEditable()){
+   gROOT->MakeDefCanvas();
+   }else{
+   gPad->GetCanvas()->Clear();
+   }
+   std::string name  = Form("%s_Gammas",Class()->GetName());
+   std::string title = Form("%s Gamma 1-D",Class()->GetName());
+   GH1D *h = (GH1D*)gROOT->FindObject(name.c_str());
+   if(!h)
+   h = new GH1D(name.c_str(),title.c_str(),4000,0,8000);
 
 
-  chain->Project(name.c_str(),Form("gretina_hits.GetDoppler(%f)",Beta),gate,opt,nentries);
-  h->GetXaxis()->SetTitle("Energy [keV]");
-  h->GetYaxis()->SetTitle("Counts / 2 keV");
-  h->Draw(opt);
+   chain->Project(name.c_str(),Form("gretina_hits.GetDoppler(%f)",Beta),gate,opt,nentries);
+   h->GetXaxis()->SetTitle("Energy [keV]");
+   h->GetYaxis()->SetTitle("Counts / 2 keV");
+   h->Draw(opt);
 
-}
+   }
 
-void TGretina::DrawDopplerBeta(Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
-  TString OptString = opt;
-  if(!chain)
-    chain = gChain;
-  if(!chain || !chain->GetBranch("TGretina"))
-    return;
-  if(!gPad || !gPad->IsEditable()){
-    gROOT->MakeDefCanvas();
-  }else{
-    gPad->GetCanvas()->Clear();
-  }
-  std::string name  = Form("%s_DopplerBeta",Class()->GetName());
-  std::string title = Form("Gretina Doppler Beta");
-  GH2I *h = (GH2I*)gROOT->FindObject(name.c_str());
-  if(!h)
-    h = new GH2I(name.c_str(),title.c_str(),2000,0,4000,101,0.2,0.5);
-  double beta = 0.2;
-  for(int i = 0; i < 100; i++){
-    chain->Project(name.c_str(),Form("gretina_hits.GetDoppler(%f):%f",beta,beta),gate,opt,nentries);
-  }
-  h->GetXaxis()->SetTitle("Energy [keV]");
-  h->GetYaxis()->SetTitle("BETA");
-  h->Draw(opt);
-  std::cout << " I DONT WORK YET!!!" << std::endl;
+   void TGretina::DrawDopplerBeta(Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
+   TString OptString = opt;
+   if(!chain)
+   chain = gChain;
+   if(!chain || !chain->GetBranch("TGretina"))
+   return;
+   if(!gPad || !gPad->IsEditable()){
+   gROOT->MakeDefCanvas();
+   }else{
+   gPad->GetCanvas()->Clear();
+   }
+   std::string name  = Form("%s_DopplerBeta",Class()->GetName());
+   std::string title = Form("Gretina Doppler Beta");
+   GH2I *h = (GH2I*)gROOT->FindObject(name.c_str());
+   if(!h)
+   h = new GH2I(name.c_str(),title.c_str(),2000,0,4000,101,0.2,0.5);
+   double beta = 0.2;
+   for(int i = 0; i < 100; i++){
+   chain->Project(name.c_str(),Form("gretina_hits.GetDoppler(%f):%f",beta,beta),gate,opt,nentries);
+   }
+   h->GetXaxis()->SetTitle("Energy [keV]");
+   h->GetYaxis()->SetTitle("BETA");
+   h->Draw(opt);
+   std::cout << " I DONT WORK YET!!!" << std::endl;
 
-}
+   }
 
-void TGretina::DrawEnVsTheta(Double_t Beta,Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
-  TString OptString = opt;
-  if(!chain)
-    chain = gChain;
-  if(!chain || !chain->GetBranch("TGretina"))
-    return;
-  if(!gPad || !gPad->IsEditable()){
-    gROOT->MakeDefCanvas();
-  }else{
-    gPad->GetCanvas()->Clear();
-  }
-  std::string name  = Form("%s_En_vs_Theta",Class()->GetName());
-  std::string title = Form("Gretina Energy vs Theta");
-  GH2I *h = (GH2I*)gROOT->FindObject(name.c_str());
-  if(!h)
-    h = new GH2I(name.c_str(),title.c_str(),4000,0,4000,314,0,3.14);
+   void TGretina::DrawEnVsTheta(Double_t Beta,Option_t *gate,Option_t *opt,Long_t nentries,TChain *chain){
+   TString OptString = opt;
+   if(!chain)
+   chain = gChain;
+   if(!chain || !chain->GetBranch("TGretina"))
+   return;
+   if(!gPad || !gPad->IsEditable()){
+   gROOT->MakeDefCanvas();
+   }else{
+   gPad->GetCanvas()->Clear();
+   }
+   std::string name  = Form("%s_En_vs_Theta",Class()->GetName());
+   std::string title = Form("Gretina Energy vs Theta");
+   GH2I *h = (GH2I*)gROOT->FindObject(name.c_str());
+   if(!h)
+   h = new GH2I(name.c_str(),title.c_str(),4000,0,4000,314,0,3.14);
 
-  chain->Project(name.c_str(),Form("gretina_hits.GetTheta():gretina_hits.GetDoppler(%f)",Beta),gate,opt,nentries);
-  h->GetXaxis()->SetTitle("Theta [radians]");
-  h->GetYaxis()->SetTitle("Energy [keV]");
-  h->Draw(opt);
+   chain->Project(name.c_str(),Form("gretina_hits.GetTheta():gretina_hits.GetDoppler(%f)",Beta),gate,opt,nentries);
+h->GetXaxis()->SetTitle("Theta [radians]");
+h->GetYaxis()->SetTitle("Energy [keV]");
+h->Draw(opt);
 
 }
 
@@ -489,8 +489,8 @@ int TGretina::BuildClusters() const {
   //for(unsigned int x=0;x<cluster_points.size();x++) {
   //  cluster_points.at(x).Print();
   //}
-  
-  
+
+
   // 2) lets now compare the cluster_points and build clusters....
   if(cluster_points.size()<1) return 0;
   clusters.push_back(TCluster());  
@@ -514,18 +514,61 @@ int TGretina::BuildClusters() const {
       clusters.back().Add(*p_it);
     }
     //p_it = cluster_points.erase(p_it);
-   // printf("\n");
+    // printf("\n");
   }
-  
-  
+
+
   //3  ok, now - ideally - we would "track" the clusters.
   //    -- can we order the interactions?
   //    -- do the interactions reproduce a FEP? 
+
+  for(int z=0;z<ClusterSize(); z++) {
+    TCluster *cluster = &clusters[z];
+    cluster->SetFOM(0.0);
+    cluster->SetKN(0.0);
+    for(int x=0;x<cluster->Size();x++) {
+      for(int y=0;y<cluster->Size();y++) {
+        if(x==y) continue;
+        TVector3 v1 = cluster->GetPoint(x).GetPosition();
+        TVector3 v2 = cluster->GetPoint(y).GetPosition();
+        double scattered_energy = cluster->GetEnergy() - cluster->GetPoint(x).GetEnergy();
+        double total_energy     = cluster->GetEnergy();
+        double scattered_angle  = v1.Angle(v2-v1) * TMath::RadToDeg(); // 1 -  (2-1)
+   
+        double calculated_angle  = GRootFunctions::ComptonAngle(&scattered_energy,&total_energy);  // i am in degrees!
+        double calculated_energy  = GRootFunctions::ComptonEnergy(&scattered_angle,&total_energy);  // i am in degrees!
+   
+        //double fom = fabs(scattered_angle-calculated_angle)/
+        double e_ratio = scattered_energy/calculated_energy;
+        double a_ratio = scattered_angle/calculated_angle;
+        double fom     = (e_ratio+a_ratio)/2.; 
+        
+        //double kn = GRootFunctions::KN_unpol_theta(&scattered_angle,&total_energy);
+        double kn = GRootFunctions::KN_unpol_theta(&calculated_angle,&total_energy);
+   
+
+        if(fabs(1-fom)  < fabs(1-cluster->GetFOM())) { cluster->SetFOM(fom);  cluster->SetKN(kn); }
+        //if(kn>cluster->GetKN())                      { cluster->SetKN(kn);   }
+
+   
+        //printf("[%i][%i] angle %3.1f / %3.1f = %2.4f    \t  energy %4.1f / %4.1f = %4.4f   fom:  %2.4f\n",x,y,
+        //                                     scattered_angle,calculated_angle,scattered_angle/calculated_angle,
+        //                                     scattered_energy,calculated_energy,scattered_energy/calculated_energy,fom);
+      }
+    }
+  }
+  //printf("best fom for the cluster is %2.4f\n",fom_best); 
+
+
+
 
 
 
   return clusters.size();
 }
+
+
+
 
 void TGretina::PrintClusters(Option_t *opt) const { 
   printf("------TGretina :: %i hits -> %i clusters ---------\n",(int)Size(),(int)clusters.size());

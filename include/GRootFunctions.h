@@ -40,6 +40,7 @@ namespace GRootFunctions {
   Double_t Polarization(Double_t *x,Double_t *par);
   Double_t PolarizationAsymmetry(Double_t *x,Double_t *par);
   Double_t KN_unpol(Double_t *x,Double_t *par);
+  Double_t KN_unpol_theta(Double_t *x,Double_t *par);
   Double_t KN_unpol_norm(Double_t *x,Double_t *par);
   Double_t KN_pol(Double_t *x,Double_t *par);
 
