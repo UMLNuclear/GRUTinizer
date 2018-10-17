@@ -91,6 +91,16 @@ while test $# -gt 0; do
         exit 1
       fi
       ;;
+    --all) 
+      if test "x$allsout" = "xyes" ; then
+        shift
+        continue
+      fi
+      callout="yes"
+      out="$out $cflags"
+      out="$out $grutmore "
+      out="$out `root-config --cflags --glibs` -lPhysics -lSpectrum -lPyROOT -lMinuit -lMathMore"
+      ;;
     --cflags)
       if test "x$cflagsout" = "xyes" ; then
         shift
@@ -148,6 +158,7 @@ while test $# -gt 0; do
       echo "  --libs          Print libdir + most used GRSI libraries ."
       echo "  --all-libs      Print libdir + all GRSI libraries ."
       echo "  --root          Print root-config output need for most grut compulations."
+      echo "  --all           Print \"all the thingz\"."
       echo "  --help          Print what you see here."
       exit 0
       ;;

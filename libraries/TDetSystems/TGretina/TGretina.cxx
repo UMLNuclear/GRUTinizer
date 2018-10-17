@@ -31,19 +31,19 @@ Float_t TGretina::m_segpos[2][36][3];
 bool    TGretina::fCRMATSet = false;
 
 bool DefaultAddback(const TGretinaHit& one,const TGretinaHit &two) {
-  //TVector3 res = one.GetLastPosition()-two.GetPosition();
-  return true; //((std::abs(one.GetTime()-two.GetTime()) < 44.0) &&
-               // (res.Mag() < 80.0) ) ;
+  TVector3 res = one.GetPosition()-two.GetPosition(); //one.GetLastPosition()-two.GetPosition();
+  return ((std::abs(one.GetTime()-two.GetTime()) < 44.0) &&
+            (res.Mag() < 80.0) ) ;
 }
 
 std::function<bool(const TGretinaHit&,const TGretinaHit&)> TGretina::fAddbackCondition = DefaultAddback;
 
 
-void TGretina::BuildAddback(int EngRange) const {
-/*
+int TGretina::BuildAddback(int EngRange) const {
+
   if( addback_hits.size() > 0 ||
       gretina_hits.size() == 0) {
-    return;
+    return 0;
   }
 
   addback_hits = gretina_hits;
@@ -66,7 +66,7 @@ void TGretina::BuildAddback(int EngRange) const {
     for(unsigned int j=i+1; j<addback_hits.size(); j++) {
       TGretinaHit& other_hit = addback_hits[j];
       if(fAddbackCondition(current_hit, other_hit)) {
-	current_hit.AddToSelf(other_hit);
+	//current_hit.AddToSelf(other_hit);
 	to_erase.push_back(j);
       }
     }
@@ -76,7 +76,8 @@ void TGretina::BuildAddback(int EngRange) const {
       addback_hits.erase(addback_hits.begin() + erasing);
     }
   }
-*/
+
+  return addback_hits.size();
 }
 
 void TGretina::SetCRMAT() {
@@ -306,6 +307,8 @@ void TGretina::Print(Option_t *opt) const {
 
 
 void TGretina::PrintInteractions(Option_t *opt) const {
+  opt=opt;
+  /*
   int ndet = Size();
   double sum=0.0;
   std::vector<TVector3> vecs;
@@ -342,7 +345,7 @@ void TGretina::PrintInteractions(Option_t *opt) const {
       printf("\t [%i, %i]  angle: %.1f\t cangle: %.1f\tcompton: %.1f \n",x,y,cluster_angle,compton_angle,ComptonEnergy(sum,compton_angle));
     }
   }
-
+*/
 }
 
 
@@ -458,16 +461,71 @@ void TGretina::DrawCoreSummary(Option_t *gate,Option_t *opt,Long_t nentries,TCha
 */
 
 
-double TGretina::ComptonAngle(double eoriginal,double escatterer) {
-  return 0;
+//double TGretina::ComptonAngle(double eoriginal,double escatterer) {
+//  return 0;
+//}
 
+
+//double TGretina::ComptonEnergy(double eoriginal,double theta) {
+//  double temp = 1 + (eoriginal/511.)*(1-TMath::Cos(theta*TMath::DegToRad()));
+//  return eoriginal *(1/temp);
+//}
+
+
+int TGretina::BuildClusters() const { 
+  // so, you wanna build a cluster.  
+  // 1) lets collect get ALL the interaction points...
+  std::vector<TClusterPoint> cluster_points;
+  for(unsigned int i=0;i<Size();i++) {
+    TGretinaHit hit = GetGretinaHit(i);
+    for(int j=0;j<hit.Size();j++) {
+      TInteractionPoint point = hit.GetInteractionPoint(j);
+      cluster_points.push_back(TClusterPoint(hit,point));
+    }
+  }
+  //sort the cluster_points?  energy, theta, phi, id ? i dunno.
+  for(unsigned int x=0;x<cluster_points.size();x++) {
+    cluster_points.at(x).Print();
+  }
+  // 2) lets now compare the cluster_points and build clusters....
+  if(cluster_points.size()<1) return 0;
+  clusters.push_back(TCluster());  
+  clusters.begin()->Add(cluster_points.at(0));
+  cluster_points.erase(cluster_points.begin());
+  std::vector<TClusterPoint>::iterator p_it;  
+  std::vector<TCluster>::iterator c_it;  
+
+  for(p_it=cluster_points.begin();p_it!=cluster_points.end();p_it++) {
+    bool used=false; 
+    for(c_it=clusters.begin();c_it!=clusters.end();c_it++) {
+      //printf("ANGLE: %.2f \n",c_it->GetPosition().Angle(p_it->GetPosition())*TMath::RadToDeg());
+      if( c_it->GetPosition().Angle(p_it->GetPosition()) < CLUSTER_ANGLE ) {
+        c_it->Add(*p_it);
+        used=true;
+        break;
+      }
+    }
+    if(!used) { 
+      clusters.push_back(TCluster());  
+      clusters.back().Add(*p_it);
+    }
+    //p_it = cluster_points.erase(p_it);
+   // printf("\n");
+  }
+
+  return clusters.size();
+}
+
+void TGretina::PrintClusters(Option_t *opt) const { 
+  printf("------TGretina :: %i hits -> %i clusters ---------\n",(int)Size(),(int)clusters.size());
+  for(unsigned int x=0;x<clusters.size();x++) 
+    clusters.at(x).Print(opt);
 }
 
 
-double TGretina::ComptonEnergy(double eoriginal,double theta) {
-  double temp = 1 + (eoriginal/511.)*(1-TMath::Cos(theta*TMath::DegToRad()));
-  return eoriginal *(1/temp);
-}
+
+
+
 
 
 

@@ -38,6 +38,8 @@ class TInteractionPoint {
     void SetAssignE(float e) { fAssignedEng = e; }
     void Print(Option_t *opt="") const;
 
+    void SetSegNum(int seg) { fSegNum = seg; }
+
   private:
     int   fSegNum;
     float fEng;          // energy as recorded by preamp.  energy in mode2 format
@@ -199,8 +201,32 @@ class TClusterPoint : public TInteractionPoint {
 
     long   GetTimestamp() const { return fTimestamp;                  }
     double GetTime()      const { return ((double)fTimestamp) - fT0;  }
+    double GetT0()        const { return fT0;                         }
     int    GetPad()       const { return fPad;                        }
+    int    GetXtal()      const { return fXtalId;                     }
 
+    int    GetWedge()     const { return GetSegNum()%6;               }  //returns 0-5  
+    int    GetLayer()     const { return GetSegNum()/6;               }
+
+    void Print(Option_t *opt="") const { 
+      opt=opt; //quiet the warnings.
+      printf("xtal[%03i] %5.1f / %5.1f  seg[%02i]:[ %3.1f, %3.1f, %3.1f ] \n",
+              GetXtal(), GetAssignE(), GetPreampE(), GetSegNum(), 
+              GetPosition().Mag(),GetPosition().Theta()*TMath::RadToDeg(),GetPosition().Phi()*TMath::RadToDeg());
+    }
+    void Combine(const TClusterPoint &other) {
+      if(other.GetEnergy()>GetEnergy()) {
+        //fXtalId    = other.GetXtal();
+        //SetSegNum(other.GetSegNum()); 
+        fTimestamp = other.GetTimestamp();
+        fT0        = other.fT0;
+      }  
+      SetAssignE(GetAssignE()+other.GetAssignE());
+      if(fPad<other.GetPad()) { fPad = other.GetPad(); }
+    }
+    
+
+    bool operator==(const TClusterPoint &rhs) const { return ((GetXtal()==rhs.GetXtal()) && (GetSegNum()==rhs.GetSegNum())); }
 
   private:
     int   fXtalId;

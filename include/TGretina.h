@@ -11,6 +11,83 @@
 #include "TDetector.h"
 #include "TGretinaHit.h"
 
+#define CLUSTER_ANGLE 0.383972
+//22 degrees in rad. 
+class TCluster { 
+  public:
+    TCluster()  { Clear(); }
+    ~TCluster() {          }
+
+    int  Size() const { return fClusterPoints.size(); }
+    void Clear(Option_t *opt="") {
+      opt=opt; //quiet the warnings.
+      fEnergySum = 0.00;
+      fCenterOfMass.SetXYZ(0,0,0);
+      fClusterPoints.clear();
+    }
+    void Add(TClusterPoint &cp)    { 
+      if(Size()==0) {
+        fCenterOfMass = cp.GetPosition(); 
+      } else {
+        double esum = fEnergySum + cp.GetEnergy();
+        double x = (fCenterOfMass.X()*fEnergySum  + cp.GetPosition().X()*cp.GetEnergy())/esum;
+        double y = (fCenterOfMass.Y()*fEnergySum  + cp.GetPosition().Y()*cp.GetEnergy())/esum;
+        double z = (fCenterOfMass.Z()*fEnergySum  + cp.GetPosition().Z()*cp.GetEnergy())/esum;
+        fCenterOfMass.SetXYZ(x,y,z);
+      }
+      fEnergySum+=cp.GetEnergy();
+      fClusterPoints.push_back(TClusterPoint(cp)); 
+    }
+    TClusterPoint Get(int i) const { return fClusterPoints.at(i); }
+    TVector3 GetPosition()   const { return fCenterOfMass; }
+    
+    void Print(Option_t *opt="") const {
+      printf("------Cluster at "); fCenterOfMass.Print(opt); 
+      for(int x=0;x<Size();x++) {
+        printf("\t");  fClusterPoints.at(x).Print(opt);
+      }
+    }
+
+    void CompressInteractions() { 
+      std::vector<TClusterPoint>::iterator it1;
+      std::vector<TClusterPoint>::iterator it2;
+      for(it1=fClusterPoints.begin();it1!=fClusterPoints.end();it1++) {
+        for(it2=it1+1;it2!=fClusterPoints.end();) {
+          if(*it1 == *it2) {
+            it1->Combine(*it2);
+            it2 = fClusterPoints.erase(it2);
+          } else {
+            it2++;
+          }
+        }
+      }
+    }
+
+  private:
+    double   fEnergySum;
+    TVector3 fCenterOfMass; 
+    std::vector<TClusterPoint> fClusterPoints; 
+
+  ClassDef(TCluster,1)  
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class TGretina : public TDetector {
 
 public:
@@ -46,14 +123,9 @@ public:
   //static void DrawEnVsTheta(Double_t Beta=0.1,Option_t *gate="",Option_t *opt="",Long_t entries=kMaxLong,TChain *chain=0);
   //static void DrawCoreSummary(Option_t *gate="",Option_t *opt="",Long_t entries=kMaxLong,TChain *chain=0);
 
+  //static double ComptonAngle(double eoriginal,double escatterer);
+  //static double ComptonEnergy(double eoriginal,double theta);
 
-
-  static double ComptonAngle(double eoriginal,double escatterer);
-  static double ComptonEnergy(double eoriginal,double theta);
-
-
-
-  
 #ifndef __CINT__ 
   static void SetAddbackCondition(std::function<bool(const TGretinaHit&,const TGretinaHit&)> condition) {
     fAddbackCondition = condition;
@@ -67,8 +139,13 @@ public:
   void  Sort() { }
   void  SortHits();
 
+  int  BuildAddback(int EngRange=-1) const;
+  int  BuildClusters() const;
+
+  void PrintClusters(Option_t *opt="") const;
+  void CompressClusters() { for(unsigned int x=0;x<clusters.size();x++) clusters[x].CompressInteractions(); }
+
 private:
-  void BuildAddback(int EngRange=-1) const;
 #ifndef __CINT__ 
   static std::function<bool(const TGretinaHit&,const TGretinaHit&)> fAddbackCondition;  
 #endif
@@ -76,6 +153,7 @@ private:
 
   std::vector<TGretinaHit> gretina_hits;
   mutable std::vector<TGretinaHit> addback_hits; //!
+  mutable std::vector<TCluster> clusters; //!
 
   static Float_t crmat[32][4][4][4];
   static Float_t m_segpos[2][36][3];
@@ -83,43 +161,9 @@ private:
   static void SetSegmentCRMAT();
   static bool fCRMATSet;
 
-
   ClassDef(TGretina,3);
 };
 
 
-class TCluster { 
-  public:
-    TCluster()  { Clear(); }
-    ~TCluster() {          }
-
-    int  Size() const { return fClusterPoints.size(); }
-    void Clear(Option_t *opt="") {
-      fEnergySum = 0.00;
-      fCenterOfMass.SetXYZ(0,0,0);
-      fClusterPoints.clear();
-    }
-    void Add(TClusterPoint &cp)    { 
-      if(Size()==0) {
-        fCenterOfMass = cp.GetPosition(); 
-      } else {
-        double esum = fEnergySum + cp.GetEnergy();
-        double x = (fCenterOfMass.X()*fEnergySum  + cp.GetPosition().X()*cp.GetEnergy())/esum;
-        double y = (fCenterOfMass.Y()*fEnergySum  + cp.GetPosition().Y()*cp.GetEnergy())/esum;
-        double z = (fCenterOfMass.Z()*fEnergySum  + cp.GetPosition().Z()*cp.GetEnergy())/esum;
-        fCenterOfMass.SetXYZ(x,y,z);
-      }
-      fEnergySum+=cp.GetEnergy();
-      fClusterPoints.push_back(TClusterPoint(cp)); 
-    }
-    TClusterPoint Get(int i) const { return fClusterPoints.at(i); }
-
-  private:
-    double   fEnergySum;
-    TVector3 fCenterOfMass; 
-    std::vector<TClusterPoint> fClusterPoints; 
-
-  ClassDef(TCluster,1)  
-};
 
 #endif
