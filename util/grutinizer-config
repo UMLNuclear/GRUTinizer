@@ -98,7 +98,7 @@ while test $# -gt 0; do
       fi
       callout="yes"
       out="$out $cflags"
-      out="$out $grutmore "
+      out=$"$out -L${libdir} $rpath $grutlibs $detlibs $grutmore -lXMLParser -lXMLIO -lX11 -lXpm -lProof -lGuiHtml "
       out="$out `root-config --cflags --glibs` -lPhysics -lSpectrum -lPyROOT -lMinuit -lMathMore"
       ;;
     --cflags)
