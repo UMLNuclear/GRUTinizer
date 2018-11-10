@@ -9,6 +9,7 @@
 
 #include <TObject.h>
 #include <TMath.h>
+#include <TF1.h>
 
 #include "TDetector.h"
 #include "TGretinaHit.h"
@@ -66,6 +67,15 @@ class TCluster {
           double calculated_energy  = GRootFunctions::ComptonEnergy(&scattered_angle,&total_energy);  // i am in degrees!
         
           double kn = GRootFunctions::KN_unpol_theta(&scattered_angle,&total_energy);
+          TF1 f("f",GRootFunctions::KN_unpol_theta_norm,0,180,2);
+          f.SetParameter(0,total_energy);  //initial gamma energy
+          f.SetParameter(1,1.0);           //scaling factor.
+          double integral = f.Integral(0,180);
+          f.SetParameter(1,1/integral);
+
+          double kn1 = f.Integral(0,scattered_angle);
+          double kn2 = 1- kn1; //f.Integral(0,scattered_angle);
+ 
 
           //double fom = fabs(scattered_angle-calculated_angle)/
           double e_ratio = scattered_energy/calculated_energy;
@@ -75,9 +85,9 @@ class TCluster {
           if(fabs(1-fom)  < fabs(1-fom_best)) { fom_best = fom; }
 
 
-          printf("[%i][%i] angle %3.1f / %3.1f = %2.4f    \t  energy %4.1f / %4.1f = %4.4f   fom:  %2.4f   KN:  %f\n",x,y,
+          printf("[%i][%i] angle %3.1f / %3.1f = %2.4f    \t  energy %4.1f / %4.1f = %4.4f   fom:  %2.4f   KN:  %f  KN1:  %f   KN2:  %f \n",x,y,
                                                scattered_angle,calculated_angle,scattered_angle/calculated_angle,
-                                               scattered_energy,calculated_energy,scattered_energy/calculated_energy,fom,kn);
+                                               scattered_energy,calculated_energy,scattered_energy/calculated_energy,fom,kn,kn1,kn2);
         }
       }
 
@@ -114,7 +124,10 @@ class TCluster {
  
     double GetFOM() const { return fFOM; }
     void   SetFOM(double fom) { fFOM=fom; }
-    
+
+    double GetTheta() const { return fTheta; }
+    void   SetTheta(double theta) { fTheta=theta; }
+
     double GetKN() const { return fKN; }
     void   SetKN(double kn) { fKN=kn; }
  
@@ -122,6 +135,7 @@ class TCluster {
     double fEnergySum;
     double fFOM;
     double fKN;
+    double fTheta; //for now, just to plot Klein-Nishina formula DH
     
     TVector3 fCenterOfMass; 
     std::vector<TClusterPoint> fClusterPoints; 

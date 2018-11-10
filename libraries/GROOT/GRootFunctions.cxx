@@ -400,6 +400,22 @@ Double_t GRootFunctions::KN_unpol_theta(Double_t *x,Double_t *par) {
   return kn*2*PI*TMath::Sin(x[0]*TMath::DegToRad()); //KN_unpol(x,par); //*2*PI*TMath::Sin(x[0]*TMath::DegToRad());
 }
 
+Double_t GRootFunctions::KN_unpol_theta_norm(Double_t *x,Double_t *par) {
+
+  //par[0] = energy of the intial gamma;
+  //par[1] = normalizatrion factor (scaling factor);
+  //x[0]   = compton scattering angle;
+  double re = 2.82; //fm
+  double alpha = par[0]/511.;
+  double ctheta = TMath::Cos(x[0]*TMath::DegToRad());
+
+  double one = (1/(1+alpha*(1-ctheta)));
+  double two = (1+ ctheta*ctheta + ((alpha*alpha*(1-ctheta)*(1-ctheta))/(1+alpha*(1-ctheta))));
+
+  double kn = 0.5*re*re*one*one*two;
+  
+  return par[1]*kn*2*PI*TMath::Sin(x[0]*TMath::DegToRad()); //KN_unpol(x,par); //*2*PI*TMath::Sin(x[0]*TMath::DegToRad());
+}
 
 Double_t GRootFunctions::KN_unpol_norm(Double_t *x,Double_t *par) {
 

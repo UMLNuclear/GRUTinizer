@@ -187,11 +187,11 @@ class TClusterPoint : public TInteractionPoint {
   public:
     TClusterPoint()  { } 
     TClusterPoint(TGretinaHit &hit, TInteractionPoint &ip) { 
+      this->Copy(ip);   
       fXtalId    = hit.GetCrystalId();  
       fTimestamp = hit.GetTimestamp();  
       fT0        = hit.GetT0();  
       fPad       = hit.GetPad();  
-      this->Copy(ip);   
     } 
     ~TClusterPoint() { } 
 

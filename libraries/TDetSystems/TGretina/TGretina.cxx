@@ -13,6 +13,7 @@
 #include "GH2I.h"
 #include "TGRUTOptions.h"
 #include "GCanvas.h"
+#include "math.h"
 
 #include "TGEBEvent.h"
 
@@ -524,8 +525,8 @@ int TGretina::BuildClusters() const {
 
   for(int z=0;z<ClusterSize(); z++) {
     TCluster *cluster = &clusters[z];
-    cluster->SetFOM(0.0);
-    cluster->SetKN(0.0);
+    cluster->SetFOM(2.0);
+    cluster->SetKN(-2.0);
     for(int x=0;x<cluster->Size();x++) {
       for(int y=0;y<cluster->Size();y++) {
         if(x==y) continue;
@@ -534,7 +535,7 @@ int TGretina::BuildClusters() const {
         double scattered_energy = cluster->GetEnergy() - cluster->GetPoint(x).GetEnergy();
         double total_energy     = cluster->GetEnergy();
         double scattered_angle  = v1.Angle(v2-v1) * TMath::RadToDeg(); // 1 -  (2-1)
-   
+
         double calculated_angle  = GRootFunctions::ComptonAngle(&scattered_energy,&total_energy);  // i am in degrees!
         double calculated_energy  = GRootFunctions::ComptonEnergy(&scattered_angle,&total_energy);  // i am in degrees!
    
@@ -545,9 +546,76 @@ int TGretina::BuildClusters() const {
         
         //double kn = GRootFunctions::KN_unpol_theta(&scattered_angle,&total_energy);
         double kn = GRootFunctions::KN_unpol_theta(&calculated_angle,&total_energy);
-   
+          
+          TF1 f("f",GRootFunctions::KN_unpol_theta_norm,0,180,2);
+          f.SetParameter(0,total_energy);  //initial gamma energy
+          f.SetParameter(1,1.0);           //scaling factor.
+          double integral = f.Integral(0,180);
+          f.SetParameter(1,1/integral);
 
-        if(fabs(1-fom)  < fabs(1-cluster->GetFOM())) { cluster->SetFOM(fom);  cluster->SetKN(kn); }
+	  double angleErr = 5.; //deg
+	  double sigma = 5.;
+
+          //double kn1 = f.Integral(0,scattered_angle);
+          //double kn2 = 1- kn1; //f.Integral(0,scattered_angle);
+          //double kn3 = f.Eval(scattered_angle);
+	  //double kn4 = f.Integral(calculated_angle-angleErr,calculated_angle+angleErr);
+	  //double kn5 =0.;
+	  //double kn6 =0.;
+	  double kn7=0.;
+	  double kn8=0.;
+	  double kn0=0.;
+	  double kn9=0.;
+	  double angDif = fabs(scattered_angle-calculated_angle);
+	  double kn11 =  f.Integral(calculated_angle-angDif,calculated_angle+angDif);
+	  double kn12 = f.Eval(scattered_angle)/f.Eval(calculated_angle);
+	  double kn13 = log(kn12);
+	  if(calculated_angle<scattered_angle){
+	    angDif = scattered_angle-calculated_angle;
+	    //kn5 = 1. - f.Integral(calculated_angle,scattered_angle);
+	    //	    kn6 = f.Integral(calculated_angle,180);
+	    kn8= 1.-f.Integral(calculated_angle,scattered_angle);
+	    kn9 = erf((scattered_angle+angDif)*pow(sigma,0.5)) - erf((scattered_angle-angDif)*pow(sigma,0.5));
+	  }
+	  else{
+	    //kn5 = 1. - f.Integral(scattered_angle,calculated_angle);
+	    angDif = calculated_angle-scattered_angle;
+	    //kn6 = f.Integral(0,calculated_angle);
+	    kn8 = 1.-f.Integral(scattered_angle,calculated_angle);
+	    kn9 = erf((scattered_angle+angDif)*pow(sigma,0.5)) - erf((scattered_angle-angDif)*pow(sigma,0.5));	 
+	  }
+	  
+	  kn = f.Integral(scattered_angle-angleErr,scattered_angle+angleErr);
+	  double angLow = scattered_angle-angDif;
+	  double angHigh = scattered_angle+angDif;
+	  if(angLow<0)
+	    angLow=0.;
+	  if(angHigh>180)
+	    angHigh=180.;
+	     
+	 
+	  kn7 =  f.Integral(angLow,angHigh); //with "Dirk" fom actually want this close to zero for good events so removing 1-
+
+	  
+	  kn=kn13;
+
+	  double radAngleSc = scattered_angle*3.14159/180.;
+	  double radAngleCl = calculated_angle*3.14159/180.;
+
+	  //fom = (scattered_angle-calculated_angle)/2.;
+	  
+	  fom = ( cos(radAngleSc)-cos(radAngleCl) )/2.;
+	  //fom += ( scattered_energy - calculated_energy)/2;
+	  //	  fom+=1-e_ratio;
+
+	  //fom = pow(kn,1)*fom;
+
+	  //if(fabs(1-fom)  < fabs(1-cluster->GetFOM())) { cluster->SetFOM(fom);  cluster->SetKN(kn); cluster->SetTheta(scattered_angle); }
+	  if(fabs(fom)  < fabs(cluster->GetFOM())) { cluster->SetFOM(fom);  cluster->SetKN(kn); cluster->SetTheta(scattered_angle); }
+	  //if(fabs(kn)  < fabs(cluster->GetKN())) { cluster->SetFOM(fom);  cluster->SetKN(kn); cluster->SetTheta(scattered_angle); }
+	  //if(fabs(fom-kn)  < fabs(cluster->GetFOM()-cluster->GetKN())) { cluster->SetFOM(fom);  cluster->SetKN(kn); cluster->SetTheta(scattered_angle); }
+        //if(kn>cluster->GetKN())   { cluster->SetFOM(fom);  cluster->SetKN(kn); }
+        
         //if(kn>cluster->GetKN())                      { cluster->SetKN(kn);   }
 
    
