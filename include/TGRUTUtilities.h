@@ -7,6 +7,8 @@
 
 #include "TGRUTTypes.h"
 
+
+
 bool file_exists(const char *filename);
 bool all_files_exist(const std::vector<std::string>& filenames);
 
@@ -28,6 +30,7 @@ inline size_t FindFileSize(const char* fname) {
 std::vector<int> MakeVectorFromFile(const char *fname);
 
 std::string ReplaceAll(std::string str, const std::string& from, const std::string& to);
+
 
 
 #endif

@@ -95,7 +95,8 @@ void TGretina::SetCRMAT() {
   int pos, xtal;
   int nn = 0;
   char *st, str[256];
-  fp = fopen64(fn, "r");
+  //fp = fopen64(fn, "r");
+  fp = fopen(fn, "r");
   if (fp == NULL) {
     printf("Could not open \"%s\".\n", fn);
     exit(1);
