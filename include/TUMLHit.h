@@ -11,7 +11,7 @@ class TUMLHit : public TDetectorHit {
 
     virtual void Copy(TObject& obj) const        { TDetectorHit::Copy(obj); }
     virtual void Clear(Option_t *opt = "");//    { TDetectorHit::Clear(opt); }
-    virtual void Print(Option_t *opt = "") const { TDetectorHit::Print(opt); }
+    virtual void Print(Option_t *opt = "") const; // { TDetectorHit::Print(opt); }
     //virtual void Draw(Option_t* opt = "")        { TDetectorHit::Draw(opt); }
 
     std::vector<unsigned short>* GetTrace()   { return &fTrace; } 

@@ -80,8 +80,12 @@ bool TCompiledHistograms::file_exists() {
 void TCompiledHistograms::Write() {
   objects.Sort();
 
+  //std::cout << "I'm writing compiled histograms" << std::endl;
+
   TIter next(&objects);
   TObject *obj;
+  // int max=1000; //DH testing
+  // int i=0;
   while((obj=next())){
     if(obj->InheritsFrom(TDirectory::Class())){
       TPreserveGDirectory preserve;
@@ -89,15 +93,24 @@ void TCompiledHistograms::Write() {
       gDirectory->mkdir(dir->GetName())->cd();
       TIter dir_next(dir->GetList());
       TObject *dir_obj;
+      //int i2=0;
       while((dir_obj=dir_next())){
+	//std::cout << dir_obj->GetName() << std::endl; 
+	//std::cout << dir_obj->IsA()->GetName() << std::endl; 
+	//std::cout << dir_obj->GetList()->GetEntries() << std::endl;
 	dir_obj->Write();
+	// i2++;
+	// if(i2==max){return;}
       }
     } else {
       obj->Write();
     }
+    // i++;
+    // if(i==max){return;}
   }
 
 
+  //std::cout << "I've written compiled histograms" << std::endl;
 
   //  objects.Write();
   //TPreserveGDirectory preserve;

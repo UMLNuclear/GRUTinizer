@@ -83,6 +83,8 @@ void THistogramLoop::OpenFile() {
 
 void THistogramLoop::CloseFile() {
   Write();
+  
+  compiled_histograms.Clear(); // clear the list og histograms to prevent root for thinking they are deleted twice.  pcb
 
   if(output_file){
     output_file->Close();
@@ -96,10 +98,14 @@ void THistogramLoop::Write() {
     return;
   }
 
+
   TPreserveGDirectory preserve;
   if(output_file){
     output_file->cd();
     compiled_histograms.Write();
+    compiled_histograms.Clear();
+    //std::cout << "Don't Fuck Me" << std::endl;
+
     if(GValue::Size()) {
       GValue::Get()->Write();
       printf(BLUE "\t%i GValues written to file %s" RESET_COLOR "\n",GValue::Size(),gDirectory->GetName());

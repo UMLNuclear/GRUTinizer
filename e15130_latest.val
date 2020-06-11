@@ -1,0 +1,90 @@
+
+
+Dispersion {
+  value: 50.0
+}
+
+Disp_Length{
+  Value: -0.2
+}
+
+Length { 
+  value: 46.502
+}
+
+
+TKE_Offset { 
+  value:  0
+}
+
+TOF1_Slope{
+  value: -3.26712
+}
+
+TOF2_Slope{
+  value: -3.3555
+}
+
+TOF1_Offset {
+  value: 509.5848
+}
+
+TOF2_Offset{
+  value: 509.9237
+}
+VC {
+  value: 0.299792458
+}
+
+AEM {
+ value:  931.494013
+}
+
+
+Brho0 {
+  value: 3.24
+}
+
+Strip_Slope {
+  Value: 0.3019
+}
+
+Z2_slope {
+  Value: 0.0
+}
+
+Z_slope {
+  Value: 6.45
+}
+
+Z_disp{
+  Value: 78
+}
+
+Disp_Z{
+  Value: 3
+}
+
+Z_offset {
+  Value: -7.9
+}
+
+Tke_Slope0{
+  Value: 0.06809
+}
+
+Tke_Slope1{
+  Value: 0.06641
+}
+
+Tke_Slope2{
+  Value: 0.30
+}
+
+Tke_Slope3{
+  Value: 0.32631
+}
+
+Tke_Slope4{
+  Value: 0.30000
+}

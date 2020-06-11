@@ -73,6 +73,8 @@ void TFilterLoop::HandleEvent(TUnpackedEvent* event) {
 }
 
 void TFilterLoop::OpenRawOutputFile(const std::string& output_filename) {
+  //if ROOT is compiled with std=c++11 then we need to use user-defined make_unique function
+  //if ROOT is compilde with std=c++14 then we can use std::make_unique
   filtered_output = make_unique<TRawFileOut>(output_filename);
 }
 

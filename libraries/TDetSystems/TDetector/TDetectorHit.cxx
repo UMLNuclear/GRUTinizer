@@ -27,7 +27,14 @@ void TDetectorHit::Clear(Option_t *opt) {
   fFlags = 0;
 }
 
-void TDetectorHit::Print(Option_t *opt) const { }
+void TDetectorHit::Print(Option_t *opt) const {
+  printf("TDetectorHit:\n");
+  printf("\tAddress: 0x%08x \n",Address());
+  printf("\tCharge:  %i\n",Charge());
+  printf("\tFound Channel: %s",TChannel::GetChannel(Address()) ? "true" : "false");
+  printf("-----------------\n");
+
+}
 
 void TDetectorHit::Copy(TObject& obj) const {
   TObject::Copy(obj);
@@ -63,6 +70,7 @@ double TDetectorHit::GetEnergy() const {
     return RawCharge();
   } else {
     TChannel* chan = TChannel::GetChannel(fAddress);
+    fflush(stdout);
     if(!chan){
       return fCharge;
     } else {

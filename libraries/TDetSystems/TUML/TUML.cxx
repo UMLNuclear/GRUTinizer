@@ -29,12 +29,14 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
       /////////////////
       /////////////////
       TUMLHit hit;
+      //printf("uml_hit address: 0x%08x\n",ddas.GetAddress()); fflush(stdout);
       hit.SetAddress(ddas.GetAddress());
       hit.SetCharge(ddas.GetEnergy());
       hit.SetTime(ddas.GetCFDTime());
       hit.SetTimestamp(ddas.GetTimestamp());
       hit.SetExternalTimestamp(ddas.GetExternalTimestamp());
       //InsertHit(hit);
+      //hit.Print();
       uml_hits.push_back(hit);
       /////////////////
       /////////////////
@@ -98,6 +100,7 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
               break;
             case 6:     //tac1  pin1-xfp
               fTac1 = ddas.GetEnergy();
+	      //std::cout << fTac1 << std::endl;
               break;
             case 7:     //tac2  pin2-xfp
               fTac2 = ddas.GetEnergy();
@@ -249,6 +252,7 @@ double TUML::SetZ() const {
 
 void TUML::CalParameters() {
   TKE = CalTKE();
+  //std::cout << GValue::Value("TOF1_slope");
   //double beta; //!
   double dPoPx = GetXPosition()/GValue::Value("Dispersion");
   brho  = GValue::Value("Brho0") * ( 1 + dPoPx / 100.);
@@ -291,3 +295,10 @@ void TUML::ReCalBrho(){
 
 
 
+void TUML::Copy(TObject& obj) const {
+  TDetector::Copy(obj);
+
+  TUML& uml = (TUML&)obj;
+  uml.uml_hits = uml_hits; // gretina_hits->Copy(*gretina.gretina_hits);
+  //addback_hits->Copy(*gretina.addback_hits);
+}

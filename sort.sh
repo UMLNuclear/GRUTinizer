@@ -4,7 +4,7 @@
 
 COMMAND="grutinizer -qH "
 
-INPUTS="e15130.val e15130.cal zcuts_run136.cuts /home/gretinaadmin/Programs/GRUTinizer/lib/libMakee15130_v3.so -o/dev/null " 
+INPUTS="e15130.val e15130.cal zcuts_run136.cuts ./lib/libMakee15130_v7.so -o/dev/null " 
 
 #FILES="/global/data1y/gretina/e15130/Run0108/Global.dat "
 #FILES=$FILES"/global/data1y/gretina/e15130/Run0109/Global.dat "
@@ -38,5 +38,5 @@ FILES=$FILES"/global/data1y/gretina/e15130/Run0139/Global.dat "
 
 for i in $FILES
 do
-  grutinizer -qH $i /home/gretinaadmin/Programs/GRUTinizer/lib/libMakee15130_v3.so e15130.val e15130.cal zcuts_run136.cuts -o /dev/null
+  grutinizer -qH $i ./lib/libMakee15130_v7.so e15130_brun231.val e15130_brun231.cal zcuts_run136.cuts -o /dev/null
 done

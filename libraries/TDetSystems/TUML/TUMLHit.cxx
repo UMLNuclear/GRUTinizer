@@ -18,5 +18,10 @@ void TUMLHit::Clear(Option_t *opt) {
 }
 
 
+void TUMLHit::Print(Option_t *opt ) const { 
+  printf("TUMLHit:  \n");
+  printf("\tEnergy:  %.1f\n",GetEnergy());
+  TDetectorHit::Print(opt); 
+}
 
 

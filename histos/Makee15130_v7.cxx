@@ -102,6 +102,12 @@ void HandleUML(TRuntimeObjects& obj) {
         if(hit.Charge()>5.0) {
             obj.FillHistogram("uml_summary",6400,0,64000,hit.Charge(),
                               40,0,40,hit.GetChannel());
+	    // if(hit.GetChannel() == 6){
+	    //   std::cout << "Made it here" << std::endl;
+	    //   std::cout << hit.Charge() << std::endl;
+	    //   //std::cout << GValue::Value("TOF1_slope") << std::endl;
+	    //   std::cout << uml->GetTac1() << std::endl;
+	    // }
         }
     }
 
@@ -140,10 +146,14 @@ void HandleUML(TRuntimeObjects& obj) {
     //if(e1_e2 && e1_e2->IsInside(uml->GetPin1().GetEnergy(),uml->GetPin2().GetEnergy())) {
 
 
-    obj.FillHistogram(dirname,"pin1_tof",1000,300,500,uml->GetTof(),
+    obj.FillHistogram(dirname,"pin1_tof",1000,100,600,uml->GetTof(),
                       1000,700,1500,uml->GetPin1().GetEnergy());
 
-    obj.FillHistogram(dirname,"pin1_tac",1000,0,300,uml->GetTac1()/1000.,
+    //std::cout << std::endl << uml->GetTac1() << std::endl;
+    //std::cout << std::endl <<  uml->fTac1 << std::endl;
+   
+
+    obj.FillHistogram(dirname,"pin1_tac",1000,0,500,uml->GetTac1(),
                       750,0,1500,uml->GetPin1().GetEnergy());
 
     obj.FillHistogram(dirname,"pin2_tof",1000,300,500,uml->GetTof(),
@@ -183,12 +193,18 @@ void HandleUML(TRuntimeObjects& obj) {
     obj.FillHistogram(dirname,"Z_Am3Q",10000,-50,0,uml->Am3Q(),
                       1000,0,100,uml->GetZ());
 
+    obj.FillHistogram(dirname,"Q_AM3Q",10000,-50,0,uml->Am3Q(),
+		      1000,0,100,uml->GetQ());
+
     if(e1_e2 && e1_e3 && e1_e2 -> IsInside(uml->GetPin1().GetEnergy(),uml->GetPin2().GetEnergy()) && HeLike && HeLike->IsInside(uml->ZmQ(),uml->GetZ())
             && e1_e3 -> IsInside(uml->GetPin1().GetEnergy(),uml->GetSssdEnergy()) ) {
         obj.FillHistogram(dirname,"dE_tke_gated",1000,10000,17000,uml->GetTKE(),
                           700,5000,12000,uml->GetPin1().GetEnergy()+uml->GetPin2().GetEnergy()+uml->GetSssdEnergy());
         obj.FillHistogram(dirname,"Z_Am3Q_gated",1000,-50,0,uml->Am3Q(),
                           1000,0,100,uml->GetZ());
+	obj.FillHistogram(dirname,"Q_AM3Q_gated",10000,-50,0,uml->Am3Q(),
+			  1000,0,100,uml->GetQ());
+
 
     }
     //}
@@ -321,7 +337,7 @@ void HandleGretina(TRuntimeObjects& obj) {
     obj.FillHistogram(dirname,"gretina_sum",8000,0,4000,sum);
 
     dirname ="clusters";
-
+    /*
     gretina->BuildClusters();
     for(int i=0; i<gretina->ClusterSize(); i++) {
         TCluster hit = gretina->GetCluster(i);
@@ -361,7 +377,7 @@ void HandleGretina(TRuntimeObjects& obj) {
         }
 
     }
-
+    */
 
 }
 
@@ -501,19 +517,19 @@ void pid_tagging(std::vector<std::multimap<long, TGretinaHit>::iterator> & store
         auto ih = std::upper_bound(w190e.begin(),w190e.end(),en);
         if(fabs(*il - en) > 2 && fabs(*ih -en)>2 ) continue;
         std::string dirname = "pid_gated_m1";
-        obj.FillHistogram(dirname,"pin1_tof",1000,300,500,uml->GetTof(),
+        obj.FillHistogram(dirname,"pin1_tof",1000,300,700,uml->GetTof(),
                           1000,700,1500,uml->GetPin1().GetEnergy());
 
-        obj.FillHistogram(dirname,"pin1_tac",1000,0,300,uml->GetTac1()/1000.,
+        obj.FillHistogram(dirname,"pin1_tac",1000,0,500,uml->GetTac1(),
                           750,0,1500,uml->GetPin1().GetEnergy());
 
-        obj.FillHistogram(dirname,"pin2_tac",1000,0,300,uml->GetTac2()/1000.,
+        obj.FillHistogram(dirname,"pin2_tac",1000,0,500,uml->GetTac2(),
                           750,0,1500,uml->GetPin2().GetEnergy());
 
-        obj.FillHistogram(dirname,"pin2_tof",1000,300,500,uml->GetTof(),
+        obj.FillHistogram(dirname,"pin2_tof",1000,300,700,uml->GetTof(),
                           1000,700,1500,uml->GetPin2().GetEnergy());
 
-        obj.FillHistogram(dirname,"tke_tof",1000,300,500,uml->GetTof(),
+        obj.FillHistogram(dirname,"tke_tof",1000,300,700,uml->GetTof(),
                           1000,10000,17000,uml->GetTKE());
 
         obj.FillHistogram(dirname,"dE_tke",1000,10000,17000,uml->GetTKE(),
@@ -664,7 +680,7 @@ void add_back(std::vector<std::multimap<long,TGretinaHit>::iterator> &store_ghit
    obj.FillHistogram("mul_add",10,0,10,size,20,-10,10,size-en.size());
 }
 
-void SearchIosmer(TRuntimeObjects &obj) {
+void SearchIsomer(TRuntimeObjects &obj) {
     long twin = 1000000; // ticks,  10,000us
     if(gretina_map.size()==0 || uml_map.size() == 0) return;
     if(gretina_map.rbegin()->first  - uml_map.begin()->first < twin) return;
@@ -687,10 +703,14 @@ void SearchIosmer(TRuntimeObjects &obj) {
         GCutG *noz1g = 0;
 
         bool pidflag = false;
-        if(e1_e2 == NULL || e1_e3 == NULL || HeLike ==NULL) pidflag = true;
+        if(e1_e2 == NULL || e1_e3 == NULL || HeLike ==NULL){
+	  pidflag = true;
+	}
         else if(e1_e2 -> IsInside(uml.GetPin1().GetEnergy(),uml.GetPin2().GetEnergy())
-                && e1_e3 -> IsInside(uml.GetPin1().GetEnergy(),uml.GetSssdEnergy()) && HeLike->IsInside(uml.ZmQ(),uml.GetZ())) pidflag = true;
-	
+                && e1_e3 -> IsInside(uml.GetPin1().GetEnergy(),uml.GetSssdEnergy()) && HeLike->IsInside(uml.ZmQ(),uml.GetZ())){
+	  //std::cout << "pidflag set" << std::endl;
+	  pidflag = true;
+	}
 	
 //    std::cout<<"pidflag: "<<pidflag<<std::endl;
     if(pidflag)
@@ -882,6 +902,11 @@ void SearchIosmer(TRuntimeObjects &obj) {
         uml_map.erase(uml_map.begin()); // done with the oldest hit in bank 88
     }
 
+    //in general should clear buffers once you're done using them
+    gretina_map.clear(); 
+    uml_map.clear();
+    //the addition of these cut out a significant amount of events
+    //still need to diagnose PID 4/23/2020 DH
 }
 
 
@@ -952,9 +977,12 @@ void MakeHistograms(TRuntimeObjects& obj) {
     }
 
 
-    SearchIosmer(obj);
+    SearchIsomer(obj);
 
 
     if(numobj!=list->GetSize())
         list->Sort();
+    
+    //std::cout << list->GetEntries() << std::endl;
+    
 }

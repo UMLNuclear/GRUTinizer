@@ -219,8 +219,8 @@ void TUnpackingLoop::HandleGEBData(TGEBEvent& event){
       fOutputEvent->AddRawData(event, kDetectorSystems::FASTSCINT);
       break;
     case 25: //uml
-//      fOutputEvent->AddRawData(event, kDetectorSystems::UML);
-      fOutputEvent->AddRawData(event, kDetectorSystems::OBJ);
+      fOutputEvent->AddRawData(event, kDetectorSystems::UML);
+//      fOutputEvent->AddRawData(event, kDetectorSystems::OBJ);  /// why????
       break;
     case 88: // Something.
       fOutputEvent->AddRawData(event, kDetectorSystems::BANK88);

@@ -14,7 +14,7 @@ class TUML : public TDetector {
     TUML() { }
     ~TUML() { }
 
-    void Copy(TObject &obj) const { } //TDetector::Copy(obj); }
+    void Copy(TObject &obj) const; //TDetector::Copy(obj); }
 
     void Clear(Option_t *opt="") { TDetector::Clear(opt); uml_hits.clear(); }
     
@@ -42,6 +42,7 @@ class TUML : public TDetector {
    // double GetTac5()     const { return fTac5 * 3.5; }
    // coefficients added by e15130.cal, below returns tof value
     double GetTac1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOF1_slope") / 1000. +GValue::Value("TOF1_offset") : 0; }
+    //double GetTac1()     const { std::cout << GValue::Value("TOF1_slope") << std::endl; return fTac1; }
     double GetTac2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOF2_slope") / 1000. +GValue::Value("TOF2_offset") : 0; }
     double GetTac3()     const { return fTac3; }
     double GetTac4()     const { return fTac4; }
@@ -89,11 +90,11 @@ class TUML : public TDetector {
     int BuildHits(std::vector<TRawEvent>& raw_data);
     //{ printf("lenda build hits called\n"); fflush(stdout);return 0;}
 
-    double fTac1;   // pin1-xfp 
-    double fTac2;   // pin2-xfp 
-    double fTac3;   // sssd-xfp 
-    double fTac4;   // implant-xfp 
-    double fTac5;   // pin1-xfp 
+    double fTac1 = 0.;   // pin1-xfp 
+    double fTac2 = 0.;   // pin2-xfp 
+    double fTac3 = 0.;   // sssd-xfp 
+    double fTac4 = 0.;   // implant-xfp 
+    double fTac5 = 0.;   // pin1-xfp 
     
     TUMLHit fPin1; 
     TUMLHit fPin2; 
