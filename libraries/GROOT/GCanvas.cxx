@@ -1069,22 +1069,21 @@ bool GCanvas::Process1DKeyboardPress(Event_t *event,UInt_t *keysym) {
         }
       }
       break;
-
-    case kKey_P: {
-                   GH1D* ghist = NULL;
-                   for(auto hist : hists){
-                     if(hist->InheritsFrom(GH1D::Class())){
-                       ghist = (GH1D*)hist;
-                       break;
-                     }
-                   }
-
-                   if(ghist){
-                     ghist->GetParent()->Draw();
-                     edited=true;
-                   }
-                 }
-                 break;
+//    case kKey_P: {
+//                 GH1D* ghist = NULL;
+//                 for(auto hist : hists){
+//                   if(hist->InheritsFrom(GH1D::Class())){
+//                     ghist = (GH1D*)hist;
+//                     break;
+//                   }
+//                 }
+//
+//                 if(ghist && ghist->GetHistParent()) {
+//                   ghist->GetHistParent()->Draw();
+//                   edited=true;
+//                 }
+//               }
+//               break;
     case kKey_q:{
                    GH1D* ghist = NULL;
                    for(auto hist : hists){
