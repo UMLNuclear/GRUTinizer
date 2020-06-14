@@ -6,7 +6,7 @@
 # EDIT THIS SECTION
 
 INCLUDES   = include
-CFLAGS     = -g -std=c++11 -O3 -Wall -Wextra -pedantic -Wno-unused-parameter
+CFLAGS     = -g -std=c++11 -O3 -Wall -Wextra -pedantic -Wno-unused-parameter -Wno-overloaded-virtual
 LINKFLAGS_PREFIX  =
 LINKFLAGS_SUFFIX  = -L/opt/X11/lib -lX11 -lXpm -std=c++11
 SRC_SUFFIX = cxx
@@ -48,7 +48,7 @@ BLD_STRING= "Building\ "
 COPY_STRING="Copying\ \ "
 FIN_STRING="Finished Building"
 
-LIBRARY_DIRS   := $(shell find libraries -type d -exec sh -c "if ! find {} ! -path {} -type d | grep -qe '.*'; then echo {}; fi" \; 2> /dev/null)
+LIBRARY_DIRS   := $(shell find libraries -type d ! -path 'libraries/SourceData' -exec sh -c "if ! find {} ! -path {} -type d | grep -qe '.*'; then echo {}; fi" \; 2> /dev/null)
 LIBRARY_NAMES  := $(notdir $(LIBRARY_DIRS))
 LIBRARY_OUTPUT := $(patsubst %,lib/lib%.so,$(LIBRARY_NAMES))
 
@@ -70,7 +70,7 @@ EXECUTABLES     := $(patsubst %.o,bin/%,$(notdir $(EXE_O_FILES))) bin/grutinizer
 HISTOGRAM_SO    := $(patsubst histos/%.$(SRC_SUFFIX),lib/lib%.so,$(wildcard histos/*.$(SRC_SUFFIX)))
 FILTER_SO    := $(patsubst filters/%.$(SRC_SUFFIX),lib/lib%.so,$(wildcard filters/*.$(SRC_SUFFIX)))
 
-#VERBOSE = 1
+VERBOSE = 1
 
 ifdef VERBOSE
 run_and_test = @echo "$(1)" && $(1);
@@ -133,7 +133,7 @@ lib/lib%.so: .build/filters/%.o | lib
 # All src files in the library directory are included.
 # If a LinkDef.h file is present in the library directory,
 #    a dictionary file will also be generated and added to the library.
-libdir          = $(shell find libraries -name $(1) -type d)
+libdir          = $(shell find libraries -name $(1) -type d ! -path 'libraries/SourceData')
 lib_src_files   = $(if $(call libdir,$(1)), $(shell find $(call libdir,$(1)) -name "*.$(SRC_SUFFIX)"), nonexisting-file.cxx)
 lib_o_files     = $(patsubst %.$(SRC_SUFFIX),.build/%.o,$(call lib_src_files,$(1)))
 lib_linkdef     = $(wildcard $(call libdir,$(1))/LinkDef.h)
@@ -142,6 +142,8 @@ lib_dictionary  = $(patsubst %/LinkDef.h,.build/%/LibDictionary.o,$(call lib_lin
 lib_pcm         = $(if \
                      $(and $(filter 1,$(USING_ROOT_6)),$(call lib_linkdef,$(1))), \
                      lib/$(1)Dict_rdict.pcm)
+echo "libdir: $libdir"
+echo "lib_src_files: $lib_src_files"
 
 lib/lib%.so: $$(call lib_o_files,%) $$(call lib_dictionary,%) | lib
 	$(call run_and_test,$(CPP) -fPIC $^ $(SHAREDSWITCH)lib$*.so $(ROOT_LIBFLAGS) -o $@,$@,$(BLD_COLOR),$(BLD_STRING),$(OBJ_COLOR) )
