@@ -20,7 +20,7 @@ $(info PLATFORM: $(PLATFORM))
 
 ifeq ($(PLATFORM),Darwin)
 export __APPLE__:= 1
-CFLAGS     += -DOS_DARWIN -DHAVE_ZLIB
+CFLAGS     += -DOS_DARWIN -DHAVE_ZLIB -mmacosx-version-min=10.13
 CFLAGS     += -I/opt/X11/include -Qunused-arguments
 CPP        = clang++
 SHAREDSWITCH = -undefined dynamic_lookup -dynamiclib -install_name # ENDING SPACE

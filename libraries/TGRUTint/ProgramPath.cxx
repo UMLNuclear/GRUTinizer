@@ -8,7 +8,6 @@
 #include <mach-o/dyld.h>
 
 std::string program_path(){
-//  char path[1024];
   char buff[PATH_MAX+1];
   uint32_t size = sizeof(buff);
   _NSGetExecutablePath(buff, &size);

@@ -1,6 +1,11 @@
 #!/bin/bash
 
-script_dir=$(dirname $(greadlink -f "$0"))
+script_dir=""
+case "$OSTYPE" in
+  darwin*)  script_dir=$(dirname $(greadlink -f "$0"));;
+  linux*)   script_dir=$(dirname $(readlink -f "$0"));;
+  *)        echo "unknown: $OSTYPE" ;;
+esac
 include_file="$script_dir"/../include/GVersion.h
 
 release_commit=$(git describe --abbrev=0 --match="v*")
