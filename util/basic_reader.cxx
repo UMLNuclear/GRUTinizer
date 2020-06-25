@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
   bool exitloop=false;
   while(infile.Read(&event)>0) {
     //printf("I AM HERE\n");
-
+    cout << count << " EventType = " << event.GetEventType() << endl;
     switch(event.GetEventType()) {
       case 1:
         if(count==print) {
@@ -47,18 +47,22 @@ int main(int argc, char **argv) {
 
           TSmartBuffer buf = event.GetPayloadBuffer();
           TRawEvent::GEBBankType1 raw = *(const TRawEvent::GEBBankType1*)buf.GetData();
+
           std::cout << raw << std::endl;
 
           TGretinaHit hit;
           hit.BuildFrom(buf);
-          hit.Print("all");
-          exitloop = true;
+//          hit.Print("all");
+          hit.Print();
+
+          exitloop = false;
         }
         count++;
         //gretina data.
         break;
-
     };
+    if(argc>3) {if(count+1 > atoi(argv[3])) exitloop =true;}
+    else {if(count+1 >1000) exitloop = true;}
     if(exitloop)
       break;
 
