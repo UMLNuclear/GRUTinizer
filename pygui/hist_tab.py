@@ -49,7 +49,7 @@ class HistTab(object):
 
         color = 1;
         for name,obj in sorted(histograms.items()):
-            if isinstance(obj, ROOT.GH2):
+            if isinstance(obj, ROOT.TH2):
                 self._refresh(name, obj)
 
             self.main._draw_single(obj,color,len(histograms))
@@ -132,7 +132,7 @@ class HistTab(object):
             iterable = obj.GetListOfKeys()
             if not iterable:
                 iterable = obj.GetList()
-        elif isinstance(obj, ROOT.GH2):
+        elif isinstance(obj, ROOT.TH2):
             iterable = itertools.chain(obj.GetProjections())
                                        #,obj.GetSummaryProjections())
         else:
