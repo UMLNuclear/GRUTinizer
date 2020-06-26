@@ -1,4 +1,4 @@
-// GRootGuiFactory.h GRootFunctions.h GRootCommands.h GRootCanvas.h GRootBrowser.h GCanvas.h  GH2I.h GH2D.h  GPeak.h GGaus.h GValue.h GH1D.h GrutNotifier.h  GSnapshot.h GCutG.h GH1.h GH2.h GPopup.h GHistPopup.h TF1Sum.h  GGraph.h GGraph2D.h GDoubleGaus.h
+// GRootGuiFactory.h GRootFunctions.h GRootCommands.h GRootCanvas.h GRootBrowser.h GCanvas.h  GH2I.h GH2D.h  GPeak.h GGaus.h GValue.h GH1D.h GrutNotifier.h  GSnapshot.h GCutG.h GPopup.h TF1Sum.h  GGraph.h GGraph2D.h GDoubleGaus.h GH2Base.h
 
 
 #ifdef __CINT__
@@ -46,7 +46,7 @@
 
 
 #pragma link C++ class GPopup+;
-#pragma link C++ class GHistPopup+;
+//#pragma link C++ class GHistPopup+;
 
 #pragma link C++ class GCutG+;
 #pragma link C++ class GPeak+;
@@ -57,17 +57,18 @@
 #pragma link C++ class std::map<std::string,GValue*>+;
 #pragma link C++ class std::pair<std::string,GValue*>+;
 #pragma link C++ class GMarker+;
-#pragma link C++ class GCanvas-;
+#pragma link C++ class GCanvas+;
 #pragma link C++ class GRootCanvas+;
 #pragma link C++ class GRootBrowser+;
 #pragma link C++ class GBrowserPlugin+;
 #pragma link C++ class GRootGuiFactory+;
 
 
-#pragma link C++ class GH1+;
-#pragma link C++ class GH2+;
+//#pragma link C++ class GH1+;
+//#pragma link C++ class GH2+;
 
 #pragma link C++ class GH1D+;
+#pragma link C++ class GH2Base+;
 #pragma link C++ class GH2I+;
 #pragma link C++ class GH2D+;
 
