@@ -54,11 +54,9 @@ class TKeyDict(dict):
         output = super(TKeyDict,self).__getitem__(key)
         if isinstance(output, ROOT.TKey):
             output = output.ReadObj()
-            if (isinstance(output, ROOT.TH2) and
-                not isinstance(output, ROOT.GH2)):
+            if (isinstance(output, ROOT.TH2)):
                 output = ROOT.GH2D(output)
-            elif (isinstance(output, ROOT.TH1) and
-                not isinstance(output, ROOT.GH1)):
+            elif (isinstance(output, ROOT.TH1)):
                 output = ROOT.GH1D(output)
             self[key] = output
 
