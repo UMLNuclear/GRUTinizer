@@ -1,5 +1,6 @@
 
 #include <TMath.h>
+#include <TRandom.h>
 
 #include <TUML.h>
 
@@ -161,9 +162,9 @@ double TUML::GetSssdEnergy() const {
 
 double TUML::GetXPosition() const { 
   //return 0;
-  if(!fSssd.size()) return -1;
+  if(!fSssd.size()) return -50;
 
-  return (fSssd.at(0).GetChannel()-16 -7.5) *3.15;
+  return (fSssd.at(0).GetChannel()-16 -7.5 + gRandom->Uniform()) *3.15;
   
   /*
   std::vector<double> chan;
