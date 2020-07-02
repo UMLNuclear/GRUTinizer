@@ -170,12 +170,12 @@ double TUML::GetXPosition() const {
   //That code can be found in "Calibrator-detectors.cpp"
 
   double esum = 0;
-  doulbe esumch = 0;
-  for(int i=0;i<fSssd.size();i++){
+  double esumch = 0;
+  for(size_t i=0;i<fSssd.size();i++){
     double eStrip = fSssd.at(i).GetEnergy();
 
     if(eStrip > 100){ //this is same threshold as in Jorge's code
-      double strip = fSssd.at(i) - 16.;
+      double strip = fSssd.at(i).GetChannel() - 16.;
       esum += eStrip;
       esumch += strip*eStrip;
     }
@@ -186,7 +186,7 @@ double TUML::GetXPosition() const {
   TRandom rand;
   if(esum!=0){
     centroid = esumch/esum;
-    x = (centroid - 7.5 +rand.Rnd())*3.15; //these seem to be hardcoded parameters... I'm a little confused because I know xslope should be 3.125 
+    x = (centroid - 7.5 +rand.Rndm()-0.5)*3.15; //these seem to be hardcoded parameters... I'm a little confused because I know xslope should be 3.125 
   }
 
   return x;
