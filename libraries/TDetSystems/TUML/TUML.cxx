@@ -161,46 +161,39 @@ double TUML::GetSssdEnergy() const {
 }
 
 double TUML::GetXPosition() const { 
-  //return 0;
+  
+  // Return an unphysical value if no strips fired.
   if(!fSssd.size()) return -50;
 
-  //return (fSssd.at(0).GetChannel()-16 -7.5 + gRandom->Uniform()) *3.15;
+  // Simple strip position calculation. First element is max strip?
+  //return (fSssd.at(0).GetChannel()-16 -7.5 + (gRandom->Uniform()-0.5)) *3.15;
   
-  //DH putting in algorithm for sssd.x from Spectcl implemented by Jorge 
-  //That code can be found in "Calibrator-detectors.cpp"
-
-  double esum = 0;
-  double esumch = 0;
-  for(size_t i=0;i<fSssd.size();i++){
-    double eStrip = fSssd.at(i).GetEnergy();
-
-    if(eStrip > 100){ //this is same threshold as in Jorge's code
-      double strip = fSssd.at(i).GetChannel() - 16.;
-      esum += eStrip;
-      esumch += strip*eStrip;
+  // Determine x position based on centroid calculation.
+  double esum   = 0;  // Sum of all strip energies
+  double esumch = 0;  // Energy-weighted channel sum
+  double emax   = 0;  // Max energy
+  int    maxch  = -1; // Strip with max energy
+  for(size_t i=0; i<fSssd.size(); i++) {       // loop over all sssd strips
+    if(fSssd.at(i).GetEnergy()<60000 && fSssd.at(i).GetEnergy()>100) {
+      esum   += fSssd.at(i).GetEnergy();       // Increment energy sum
+      esumch += (fSssd.at(i).GetChannel()-16)*fSssd.at(i).GetEnergy();// Increment weighted sum
+      if(fSssd.at(i).GetEnergy() > emax && fSssd.at(i).GetEnergy()<60000) {
+        emax = fSssd.at(i).GetEnergy();        // Record maximum energy
+        maxch = (fSssd.at(i).GetChannel()-16); // Record location of maximum energy
+      }
     }
-   }
-
-  double centroid = 0;
-  double x = 0;
-  TRandom rand;
-  if(esum!=0){
-    centroid = esumch/esum;
-    x = (centroid - 7.5 +rand.Rndm()-0.5)*3.15; //these seem to be hardcoded parameters... I'm a little confused because I know xslope should be 3.125 
+  } // end loop over all sssd strips
+  
+  // Calculate centroid
+  double cent= -50;
+  double x   = -50;
+  if(esum !=0) {
+    cent = esumch/esum; // Centroid
+    x    = (cent - 7.5 + (gRandom->Uniform()-0.5)) *3.15;
   }
-
   return x;
-
-  /*
-  std::vector<double> chan;
-  std::vector<double> data;
-  for(size_t i=0;i<fSssd.size();i++) {
-    chan.push_back(fSssd.at(i).GetChannel()-16);
-    data.push_back(fSssd.at(i).Charge());
-  }
-  return TMath::Mean(chan.begin(),chan.end(),data.begin());
-  */
 }
+
 
 double TUML::CalTKE() const {
   return GetPin1().GetEnergy() + 
