@@ -164,8 +164,33 @@ double TUML::GetXPosition() const {
   //return 0;
   if(!fSssd.size()) return -50;
 
-  return (fSssd.at(0).GetChannel()-16 -7.5 + gRandom->Uniform()) *3.15;
+  //return (fSssd.at(0).GetChannel()-16 -7.5 + gRandom->Uniform()) *3.15;
   
+  //DH putting in algorithm for sssd.x from Spectcl implemented by Jorge 
+  //That code can be found in "Calibrator-detectors.cpp"
+
+  double esum = 0;
+  doulbe esumch = 0;
+  for(int i=0;i<fSssd.size();i++){
+    double eStrip = fSssd.at(i).GetEnergy();
+
+    if(eStrip > 100){ //this is same threshold as in Jorge's code
+      double strip = fSssd.at(i) - 16.;
+      esum += eStrip;
+      esumch += strip*eStrip;
+    }
+   }
+
+  double centroid = 0;
+  double x = 0;
+  TRandom rand;
+  if(esum!=0){
+    centroid = esumch/esum;
+    x = (centroid - 7.5 +rand.Rnd())*3.15; //these seem to be hardcoded parameters... I'm a little confused because I know xslope should be 3.125 
+  }
+
+  return x;
+
   /*
   std::vector<double> chan;
   std::vector<double> data;
