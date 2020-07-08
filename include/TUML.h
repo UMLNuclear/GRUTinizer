@@ -55,7 +55,7 @@ class TUML : public TDetector {
   
     bool Good() const { return true; }
 
-    int    CalStrips();
+    int    CalcStrips();
     double GetSssdEnergy()  const;
     size_t GetSssdRawMult() const { return SizeSssd(); }
     int    GetSssdMult()    const { return fSssdMult; }
@@ -116,10 +116,10 @@ class TUML : public TDetector {
    //// Oleg ToF Things //
    ///////////////////////
 
-    double CalTKE() const;
+    double CalTKE();
     double Beta_to_Gamma(double beta) const;
     double SetAoQ();
-    double SetZ()   const;
+    double SetZ() const;
 
     double TKE;   //!
     double beta;  //!

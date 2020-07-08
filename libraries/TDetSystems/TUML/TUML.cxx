@@ -146,6 +146,7 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
        
     }
   }
+  CalParameters();
   fSize = uml_hits.size();
   return fSize;
 }
@@ -160,7 +161,8 @@ double TUML::GetSssdEnergy() const {
   return sum * GValue::Value("Strip_Slope");
 }
 
-int TUML::CalStrips() {
+
+int TUML::CalcStrips() {
   
   // Simple strip position calculation. First element is max strip?
   //return (fSssd.at(0).GetChannel()-16 -7.5 + (gRandom->Uniform()-0.5)) *3.15;
@@ -195,13 +197,15 @@ int TUML::CalStrips() {
 }
 
 
-double TUML::CalTKE() const {
-  return GetPin1().GetEnergy() + 
-         GetPin2().GetEnergy() + 
-         GetSssdEnergy() +
-         GetImplant().GetEnergy() + 
-         GValue::Value("TKE_Offset");
+double TUML::CalTKE() {
+  TKE = GetPin1().GetEnergy() +
+        GetPin2().GetEnergy() +
+        GetSssdEnergy() +
+        GetImplant().GetEnergy() +
+        GValue::Value("TKE_Offset");
+  return TKE;
 }  
+
 
 double TUML::Beta_to_Gamma(double beta) const {
   if(beta<=0)return 1;
@@ -270,19 +274,17 @@ double TUML::SetZ() const {
 
 
 void TUML::CalParameters() {
-  CalStrips();
+  // Calculate any derived parameters and set values.
+  CalcStrips();
   TKE = CalTKE();
-  //std::cout << GValue::Value("TOF1_slope");
-  //double beta; //!
+
+  // Calculate PID parameters
   double dPoPx = GetXPosition()/GValue::Value("Dispersion");
   brho  = GValue::Value("Brho0") * ( 1 + dPoPx / 100.);
-  if(GetTof()>0)
-  beta = GValue::Value("Length") * (1 + dPoPx * GValue::Value("Disp_Length") /100.)  / GetTof() / GValue::Value("VC");
-  else beta = 0;
-  //double gamma; //!
+  if(GetTof()>0){
+    beta = GValue::Value("Length") * (1 + dPoPx * GValue::Value("Disp_Length") /100.)  / GetTof() / GValue::Value("VC");
+  } else beta = 0;
   gamma = Beta_to_Gamma(beta);
-  //double brho; //!
-  //double Z; //!
   Z = SetZ();
   
   if(Z>0) {
@@ -311,14 +313,9 @@ void TUML::ReCalBrho(){
 }
 
 
-
-
-
-
 void TUML::Copy(TObject& obj) const {
   TDetector::Copy(obj);
 
   TUML& uml = (TUML&)obj;
-  uml.uml_hits = uml_hits; // gretina_hits->Copy(*gretina.gretina_hits);
-  //addback_hits->Copy(*gretina.addback_hits);
+  uml.uml_hits = uml_hits;
 }
