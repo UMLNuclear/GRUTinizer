@@ -36,6 +36,7 @@ class TUMLHit : public TDetectorHit {
 
     long fExternalTimestamp;
 
+
   ClassDef(TUMLHit,1)
 };
 

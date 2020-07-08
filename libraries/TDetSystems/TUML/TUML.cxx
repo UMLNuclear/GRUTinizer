@@ -160,11 +160,8 @@ double TUML::GetSssdEnergy() const {
   return sum * GValue::Value("Strip_Slope");
 }
 
-double TUML::GetXPosition() const { 
+int TUML::CalStrips() {
   
-  // Return an unphysical value if no strips fired.
-  if(!fSssd.size()) return -50;
-
   // Simple strip position calculation. First element is max strip?
   //return (fSssd.at(0).GetChannel()-16 -7.5 + (gRandom->Uniform()-0.5)) *3.15;
   
@@ -173,10 +170,12 @@ double TUML::GetXPosition() const {
   double esumch = 0;  // Energy-weighted channel sum
   double emax   = 0;  // Max energy
   int    maxch  = -1; // Strip with max energy
+  fSssdMult     = 0;  // Number of true strips fired
   for(size_t i=0; i<fSssd.size(); i++) {       // loop over all sssd strips
     if(fSssd.at(i).GetEnergy()<60000 && fSssd.at(i).GetEnergy()>100) {
       esum   += fSssd.at(i).GetEnergy();       // Increment energy sum
       esumch += (fSssd.at(i).GetChannel()-16)*fSssd.at(i).GetEnergy();// Increment weighted sum
+      fSssdMult += 1;    // Number of stips fired for that event
       if(fSssd.at(i).GetEnergy() > emax && fSssd.at(i).GetEnergy()<60000) {
         emax = fSssd.at(i).GetEnergy();        // Record maximum energy
         maxch = (fSssd.at(i).GetChannel()-16); // Record location of maximum energy
@@ -185,13 +184,14 @@ double TUML::GetXPosition() const {
   } // end loop over all sssd strips
   
   // Calculate centroid
+  // Return an unphysical value if no strips fired.
+  if(fSssd.size()<=0) fXPosition = -50;
   double cent= -50;
-  double x   = -50;
   if(esum !=0) {
     cent = esumch/esum; // Centroid
-    x    = (cent - 7.5 + (gRandom->Uniform()-0.5)) *3.15;
+    fXPosition = (cent - 7.5 + (gRandom->Uniform()-0.5)) *3.15;
   }
-  return x;
+  return 1;
 }
 
 
@@ -270,6 +270,7 @@ double TUML::SetZ() const {
 
 
 void TUML::CalParameters() {
+  CalStrips();
   TKE = CalTKE();
   //std::cout << GValue::Value("TOF1_slope");
   //double beta; //!

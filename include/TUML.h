@@ -22,11 +22,11 @@ class TUML : public TDetector {
     TDetectorHit &GetHit(int i) { return uml_hits.at(i); } 
     static TVector3 GetPosition(int i) { return TVector3(0,0,1); }
 
-    size_t Size() const      { return uml_hits.size(); }
-    size_t SizeSssd() const      { return fSssd.size(); }
+    size_t Size()     const    { return uml_hits.size(); }
+    size_t SizeSssd() const    { return fSssd.size(); }
 
 
-    TUMLHit GetUMLHit(int i) { return uml_hits[i]; } //.at(i);  }
+    TUMLHit GetUMLHit(int i)   { return uml_hits[i]; } //.at(i);  }
     TUMLHit GetPin1()    const { return fPin1; }
     TUMLHit GetPin2()    const { return fPin2; }
     TUMLHit GetImplant() const { return fImplant; }
@@ -55,9 +55,11 @@ class TUML : public TDetector {
   
     bool Good() const { return true; }
 
-    //double TKE()           const;
-    double GetSssdEnergy() const;
-    double GetXPosition()  const;
+    int    CalStrips();
+    double GetSssdEnergy()  const;
+    size_t GetSssdRawMult() const { return SizeSssd(); }
+    int    GetSssdMult()    const { return fSssdMult; }
+    double GetXPosition()   const { return fXPosition; }
 
     //double GetBhro()       const;
     //double AoQ()           const;
@@ -88,7 +90,6 @@ class TUML : public TDetector {
 
   //private:
     int BuildHits(std::vector<TRawEvent>& raw_data);
-    //{ printf("lenda build hits called\n"); fflush(stdout);return 0;}
 
     double fTac1 = 0.;   // pin1-xfp 
     double fTac2 = 0.;   // pin2-xfp 
@@ -106,6 +107,10 @@ class TUML : public TDetector {
     
     std::vector<TUMLHit> fSssd;
     std::vector<TUMLHit> uml_hits;
+  
+    bool   kCalStrips  = false;
+    double fXPosition = -50.0;
+    int    fSssdMult  = 0;
 
    ///////////////////////
    //// Oleg ToF Things //
@@ -131,7 +136,7 @@ class TUML : public TDetector {
    ////////////////////
    ////////////////////
    ////////////////////
-  ClassDef(TUML,4);
+  ClassDef(TUML,5);
 };
 
 #endif
