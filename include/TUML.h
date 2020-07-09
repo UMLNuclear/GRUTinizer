@@ -56,7 +56,7 @@ class TUML : public TDetector {
     bool Good() const { return true; }
 
     int    CalcStrips();
-    double GetSssdEnergy()  const;
+    double GetSssdEnergy()  const { return fSssdESum; }
     size_t GetSssdRawMult() const { return SizeSssd(); }
     int    GetSssdMult()    const { return fSssdMult; }
     double GetXPosition()   const { return fXPosition; }
@@ -108,9 +108,11 @@ class TUML : public TDetector {
     std::vector<TUMLHit> fSssd;
     std::vector<TUMLHit> uml_hits;
   
-    bool   kCalStrips  = false;
-    double fXPosition = -50.0;
-    int    fSssdMult  = 0;
+    double fXPosition  = -50.0;
+    int    fSssdMult   =   0;
+    double fSssdESum   =   0;
+    double fSssdEMax   =   0;
+    int    fSssdEMaxCh =  -1;
 
    ///////////////////////
    //// Oleg ToF Things //

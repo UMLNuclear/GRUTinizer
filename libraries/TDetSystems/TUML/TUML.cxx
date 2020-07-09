@@ -10,7 +10,7 @@
 
 ClassImp(TUML)
 
-
+//______________________________________________________________________________
 int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
   for(auto& event : raw_data){
     SetTimestamp(event.GetTimestamp());
@@ -26,9 +26,7 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
       TDDASEvent<DDASGEBHeader> ddas(buf);
       //std::cout << ddas.GetTimestamp() << "     ddas.GetAddress():   " << ddas.GetAddress() << std::endl;
       
-      /////////////////
-      /////////////////
-      /////////////////
+      //
       TUMLHit hit;
       //printf("uml_hit address: 0x%08x\n",ddas.GetAddress()); fflush(stdout);
       hit.SetAddress(ddas.GetAddress());
@@ -39,11 +37,8 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
       //InsertHit(hit);
       //hit.Print();
       uml_hits.push_back(hit);
-      /////////////////
-      /////////////////
-      /////////////////
       
-      int ddas_card    = ddas.GetSlotID(); 
+      int ddas_card    = ddas.GetSlotID();
       int ddas_channel = ddas.GetChannelID();
       //int ddas_energy  = ddas.GetEnergy();
       //unsigned int ddas_address = ddas.GetAddress();
@@ -130,7 +125,6 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
             case 15:    // low hertz pulser
               break;
           };
-         
 
         } else if(ddas_card==3) { //sssd detector
           TUMLHit hit;
@@ -146,41 +140,42 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
        
     }
   }
-  CalParameters();
+  CalParameters();  // Calculate any derived quantities
   fSize = uml_hits.size();
   return fSize;
 }
 
-double TUML::GetSssdEnergy() const {
-  double sum = 0.00;
-  for(size_t i=0;i<fSssd.size();i++) {
-    sum += fSssd.at(i).GetEnergy();
-  }
-  //std::cout << "sssd energy:   "  << sum << std::endl;
 
-  return sum * GValue::Value("Strip_Slope");
-}
+////______________________________________________________________________________
+//double TUML::GetSssdEnergy() const {
+//  double sum = 0.00;
+//  for(size_t i=0; i<fSssd.size(); i++) {
+//    sum += fSssd.at(i).GetEnergy();
+//  }
+//  //std::cout << "sssd energy:   "  << sum << std::endl;
+//
+//  return sum * GValue::Value("Strip_Slope");
+//}
 
 
+//______________________________________________________________________________
 int TUML::CalcStrips() {
-  
-  // Simple strip position calculation. First element is max strip?
-  //return (fSssd.at(0).GetChannel()-16 -7.5 + (gRandom->Uniform()-0.5)) *3.15;
-  
   // Determine x position based on centroid calculation.
-  double esum   = 0;  // Sum of all strip energies
-  double esumch = 0;  // Energy-weighted channel sum
-  double emax   = 0;  // Max energy
-  int    maxch  = -1; // Strip with max energy
-  fSssdMult     = 0;  // Number of true strips fired
-  for(size_t i=0; i<fSssd.size(); i++) {       // loop over all sssd strips
+  double esumch =  0;  // Energy-weighted channel sum
+  fSssdESum     =  0;  // Sum of all strip energies
+  fSssdEMax     =  0;  // Max energy
+  fSssdEMaxCh   = -1;  // Strip with max energy
+  fSssdMult     =  0;  // Number of true strips fired
+  
+  // Loop over all sssd strips
+  for(size_t i=0; i<fSssd.size(); i++) {
     if(fSssd.at(i).GetEnergy()<60000 && fSssd.at(i).GetEnergy()>100) {
-      esum   += fSssd.at(i).GetEnergy();       // Increment energy sum
-      esumch += (fSssd.at(i).GetChannel()-16)*fSssd.at(i).GetEnergy();// Increment weighted sum
+      fSssdESum += fSssd.at(i).GetEnergy();          // Increment energy sum
+      esumch    += (fSssd.at(i).GetChannel()-16)*fSssd.at(i).GetEnergy();// Increment weighted sum
       fSssdMult += 1;    // Number of stips fired for that event
-      if(fSssd.at(i).GetEnergy() > emax && fSssd.at(i).GetEnergy()<60000) {
-        emax = fSssd.at(i).GetEnergy();        // Record maximum energy
-        maxch = (fSssd.at(i).GetChannel()-16); // Record location of maximum energy
+      if(fSssd.at(i).GetEnergy() > fSssdEMax && fSssd.at(i).GetEnergy()<60000) {
+        fSssdEMax   = fSssd.at(i).GetEnergy();       // Record maximum energy
+        fSssdEMaxCh = (fSssd.at(i).GetChannel()-16); // Record location of maximum energy
       }
     }
   } // end loop over all sssd strips
@@ -189,24 +184,37 @@ int TUML::CalcStrips() {
   // Return an unphysical value if no strips fired.
   if(fSssd.size()<=0) fXPosition = -50;
   double cent= -50;
-  if(esum !=0) {
-    cent = esumch/esum; // Centroid
+  if(fSssdESum !=0) {
+    cent       = esumch/fSssdESum; // Centroid
     fXPosition = (cent - 7.5 + (gRandom->Uniform()-0.5)) *3.15;
   }
+  
+  // Calibrate the total SSSD energy sum
+  fSssdESum = fSssdESum * GValue::Value("Strip_Slope");
+  
   return 1;
 }
 
 
+//______________________________________________________________________________
 double TUML::CalTKE() {
+//  TKE = GetPin1().GetEnergy() * GValue::Value("TKE_Slope0") +
+//        GetPin2().GetEnergy() * GValue::Value("TKE_Slope1") +
+//        GetSssdEnergy()       * GValue::Value("TKE_Slope2") +
+//        GetImplant().GetEnergy() * GValue::Value("TKE_Slope3") +
+//        GValue::Value("TKE_Offset");
+
   TKE = GetPin1().GetEnergy() +
         GetPin2().GetEnergy() +
-        GetSssdEnergy() +
+        GetSssdEnergy()       +
         GetImplant().GetEnergy() +
         GValue::Value("TKE_Offset");
+
   return TKE;
 }  
 
 
+//______________________________________________________________________________
 double TUML::Beta_to_Gamma(double beta) const {
   if(beta<=0)return 1;
   double beta2 = beta*beta;
@@ -217,10 +225,10 @@ double TUML::Beta_to_Gamma(double beta) const {
 }
 
 
-
+//______________________________________________________________________________
 double TUML::SetAoQ() {
-   double AoQ_local = -1; 
- if(GetTof()  > 10.) {
+  double AoQ_local = -1;
+  if(GetTof()  > 10.) {
 //   double dPoPx = GetXPosition()/GValue::Value("Dispersion");
 //   double beta = GValue::Value("Length") * (1 + dPoPx * GValue::Value("Disp_Length") /100.)  / GetTof() / GValue::Value("VC");
 //   double gamma = Beta_to_Gamma(beta);
@@ -247,6 +255,8 @@ double TUML::SetAoQ() {
  return AoQ_local;
 }
 
+
+//______________________________________________________________________________
 double TUML::SetZ() const {
   double Z = 0;
   double dPoPx = GetXPosition()/GValue::Value("Dispersion");
@@ -272,11 +282,23 @@ double TUML::SetZ() const {
 }
 
 
-
+//______________________________________________________________________________
 void TUML::CalParameters() {
   // Calculate any derived parameters and set values.
   CalcStrips();
-  TKE = CalTKE();
+  CalTKE();
+  // CalTof
+  // CaldPoPx
+  // CalBrho
+  // CalBetaGamma
+  // CalZ
+  // Cal dPoP
+  // ReCalBrho
+  // CalAoQ
+  // CalQ
+  // CalA
+  // CalAraw
+  // CalZmQ
 
   // Calculate PID parameters
   double dPoPx = GetXPosition()/GValue::Value("Dispersion");
@@ -309,10 +331,12 @@ void TUML::CalParameters() {
 }
 
 
+//______________________________________________________________________________
 void TUML::ReCalBrho(){
 }
 
 
+//______________________________________________________________________________
 void TUML::Copy(TObject& obj) const {
   TDetector::Copy(obj);
 
