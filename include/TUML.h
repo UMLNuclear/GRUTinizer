@@ -41,25 +41,29 @@ class TUML : public TDetector {
    // double GetTac4()     const { return fTac4 * 3.3999 * 2; }
    // double GetTac5()     const { return fTac5 * 3.5; }
    // coefficients added by e15130.cal, below returns tof value
-    double GetTac1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOF1_slope") / 1000. +GValue::Value("TOF1_offset") : 0; }
+    double GetTof1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOF1_slope") / 1000. +GValue::Value("TOF1_offset") : 0; }
     //double GetTac1()     const { std::cout << GValue::Value("TOF1_slope") << std::endl; return fTac1; }
-    double GetTac2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOF2_slope") / 1000. +GValue::Value("TOF2_offset") : 0; }
+    double GetTof2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOF2_slope") / 1000. +GValue::Value("TOF2_offset") : 0; }
+  double GetTofd1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOFD1_slope") / 1000. +GValue::Value("TOFD1_offset") : 0; }
+  double GetTofd2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOFD2_slope") / 1000. +GValue::Value("TOFD2_offset") : 0; }
+
+    double GetTac1()     const { return fTac1; }
+    double GetTac2()     const { return fTac2; }
     double GetTac3()     const { return fTac3; }
     double GetTac4()     const { return fTac4; }
     double GetTac5()     const { return fTac5; }
 
-//    double GetTof()      const { return -GetTac1() / 1000. + GValue::Value("Tof_Offset"); }// this should be ns
-    double GetTof()      const { return 1/2.*(GetTac1()+GetTac2()); }// this should be ns
-//    double GetTof()      const { return GetTac1(); }// this should be ns
+//    double GetTof()      const { return 1/2.*(GetTac1()+GetTac2()); }// this should be ns
+    double GetTof()      const { return fTof; }// this should be ns
 
   
     bool Good() const { return true; }
 
-    int    CalcStrips();
-    double GetSssdEnergy()  const { return fSssdESum; }
+  double GetSssdEnergy()  const { return fSssdESum; }
     size_t GetSssdRawMult() const { return SizeSssd(); }
     int    GetSssdMult()    const { return fSssdMult; }
     double GetXPosition()   const { return fXPosition; }
+  
 
     //double GetBhro()       const;
     //double AoQ()           const;
@@ -75,17 +79,20 @@ class TUML : public TDetector {
 
     double ZmQ() const  { return Z - Q; }
     
-    double GetTKE()   const { return TKE;   }
-    double GetBeta()  const { return beta;  }
-    double GetGamma() const { return gamma; }
-    double GetdBrho() const { return dbrho; }
-    double GetBrho()  const { return brho;  }
-    double GetAoQ()   const { return AoQ;   }
-    double GetZ()     const { return Z;     }
-    double GetQ()     const { return Q;     }
+    double GetdE()    const { return dE;     }
+    double GetTKE()   const { return TKE;    }
+    double GetBeta()  const { return beta;   }
+    double GetGamma() const { return gamma;  }
+    double GetdPoPx() const { return dPoPx;  }
+    double GetdBrho() const { return dbrho;  }
+    double GetBrho()  const { return brho;   }
+    double GetZ()     const { return Z;      }
+    double GetdPoPz() const { return dPoPz;  }
+    double GetdPoP()  const { return dPoP;   }
+    double GetAoQ()   const { return AoQ;    }
+    double GetQ()     const { return Q;      }
 
     void CalParameters();
-    void ReCalBrho();
     
 
   //private:
@@ -95,8 +102,14 @@ class TUML : public TDetector {
     double fTac2 = 0.;   // pin2-xfp 
     double fTac3 = 0.;   // sssd-xfp 
     double fTac4 = 0.;   // implant-xfp 
-    double fTac5 = 0.;   // pin1-xfp 
-    
+    double fTac5 = 0.;   // pin1-xfp
+  
+    double fTof1  = 0.;
+    double fTof2  = 0.;
+    double fTofd1 = 0.;
+    double fTofd2 = 0.;
+    double fTof   = 0.;
+
     TUMLHit fPin1; 
     TUMLHit fPin2; 
     TUMLHit fImplant;  // pin3
@@ -118,19 +131,34 @@ class TUML : public TDetector {
    //// Oleg ToF Things //
    ///////////////////////
 
-    double CalTKE();
+    int    CalcStrips();
+    double CalcTKE();
+    double CalcTof();
+    double CalcdPoPx();
+    double CalcBrho();
+    void   CalcBetaGamma();
+    double CalcZ();
+    double CalcdPoPz();
+    double CalcdPoP();
+    void   ReCalBrho();
+    double CalcAoQ();
+    double CalcQ();
     double Beta_to_Gamma(double beta) const;
-    double SetAoQ();
-    double SetZ() const;
+//    double SetZ() const;
+  
 
-    double TKE;   //!
-    double beta;  //!
-    double gamma; //!
-    double dbrho; //!
-    double brho;  //!
-    double AoQ;   //!
-    double Z;     //!
-    double Q;     //!
+    double dE;
+    double TKE;
+    double dPoPx;
+    double dbrho;
+    double brho;
+    double beta;
+    double gamma;
+    double Z;
+    double dPoPz;
+    double dPoP;
+    double AoQ;
+    double Q;     
 
     double gamma_energy; 
     double gamma_time;   
