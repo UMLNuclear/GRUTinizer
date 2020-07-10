@@ -190,8 +190,9 @@ int TUML::CalcStrips() {
   }
   
   // Calibrate the total SSSD energy sum -- Not needed!
-  //fSssdESum = fSssdESum * GValue::Value("Strip_Slope");
-  
+  //  fSssdECalSum = fSssdESum * GValue::Value("Strip_Slope");
+  fSssdECalSum = fSssdESum * GValue::Value("Tke_Slope2");
+
   return 1;
 }
 
@@ -204,11 +205,11 @@ double TUML::CalcTKE() {
 //        GetImplant().GetEnergy() * GValue::Value("TKE_Slope3") +
 //        GValue::Value("TKE_Offset");
   
-  // Calculate dE, must use CHARGE since 
+  // Calculate dE, must use CHARGE since
   dE  = 0;
   dE += GetPin1().Charge()    * GValue::Value("Tke_Slope0");
   dE += GetPin2().Charge()    * GValue::Value("Tke_Slope1");
-  dE += GetSssdEnergy()       * GValue::Value("Tke_Slope2");
+  dE += GetSssdGMEnergy()     * GValue::Value("Tke_Slope2");
 
   
   // Calculate total kinetic energy

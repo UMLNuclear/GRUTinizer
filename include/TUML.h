@@ -59,10 +59,11 @@ class TUML : public TDetector {
   
     bool Good() const { return true; }
 
-  double GetSssdEnergy()  const { return fSssdESum; }
-    size_t GetSssdRawMult() const { return SizeSssd(); }
-    int    GetSssdMult()    const { return fSssdMult; }
-    double GetXPosition()   const { return fXPosition; }
+    double GetSssdGMEnergy() const { return fSssdESum; }
+    double GetSssdEnergy()   const { return fSssdECalSum; }
+    size_t GetSssdRawMult()  const { return SizeSssd(); }
+    int    GetSssdMult()     const { return fSssdMult; }
+    double GetXPosition()    const { return fXPosition; }
   
 
     //double GetBhro()       const;
@@ -121,11 +122,12 @@ class TUML : public TDetector {
     std::vector<TUMLHit> fSssd;
     std::vector<TUMLHit> uml_hits;
   
-    double fXPosition  = -50.0;
-    int    fSssdMult   =   0;
-    double fSssdESum   =   0;
-    double fSssdEMax   =   0;
-    int    fSssdEMaxCh =  -1;
+    double fXPosition   = -50.0;
+    int    fSssdMult    =   0;
+    double fSssdESum    =   0;
+    double fSssdECalSum =   0;
+    double fSssdEMax    =   0;
+    int    fSssdEMaxCh  =  -1;
 
    ///////////////////////
    //// Oleg ToF Things //
@@ -158,7 +160,7 @@ class TUML : public TDetector {
     double dPoPz;
     double dPoP;
     double AoQ;
-    double Q;     
+    double Q;
 
     double gamma_energy; 
     double gamma_time;   
