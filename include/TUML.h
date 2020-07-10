@@ -26,7 +26,7 @@ class TUML : public TDetector {
     size_t SizeSssd() const    { return fSssd.size(); }
 
 
-    TUMLHit GetUMLHit(int i)   { return uml_hits[i]; } //.at(i);  }
+    TUMLHit GetUMLHit(int i)   { return uml_hits[i]; }
     TUMLHit GetPin1()    const { return fPin1; }
     TUMLHit GetPin2()    const { return fPin2; }
     TUMLHit GetImplant() const { return fImplant; }
@@ -35,17 +35,11 @@ class TUML : public TDetector {
     TUMLHit GetXfp1()    const { return fXfp1; }
     TUMLHit GetXfp2()    const { return fXfp2; }
 
-   // double GetTac1()     const { return fTac1 * 3.2671; }
-   // double GetTac2()     const { return fTac2 * 3.3555 * 2; }
-   // double GetTac3()     const { return fTac3 * 3.6493 * 2; }
-   // double GetTac4()     const { return fTac4 * 3.3999 * 2; }
-   // double GetTac5()     const { return fTac5 * 3.5; }
    // coefficients added by e15130.cal, below returns tof value
     double GetTof1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOF1_slope") / 1000. +GValue::Value("TOF1_offset") : 0; }
-    //double GetTac1()     const { std::cout << GValue::Value("TOF1_slope") << std::endl; return fTac1; }
     double GetTof2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOF2_slope") / 1000. +GValue::Value("TOF2_offset") : 0; }
-  double GetTofd1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOFD1_slope") / 1000. +GValue::Value("TOFD1_offset") : 0; }
-  double GetTofd2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOFD2_slope") / 1000. +GValue::Value("TOFD2_offset") : 0; }
+    double GetTofd1()     const { return fTac1 > 0 ? fTac1*GValue::Value("TOFD1_slope") / 1000. +GValue::Value("TOFD1_offset") : 0; }
+    double GetTofd2()     const { return fTac2 > 0 ? fTac2*GValue::Value("TOFD2_slope") / 1000. +GValue::Value("TOFD2_offset") : 0; }
 
     double GetTac1()     const { return fTac1; }
     double GetTac2()     const { return fTac2; }
@@ -53,9 +47,7 @@ class TUML : public TDetector {
     double GetTac4()     const { return fTac4; }
     double GetTac5()     const { return fTac5; }
 
-//    double GetTof()      const { return 1/2.*(GetTac1()+GetTac2()); }// this should be ns
     double GetTof()      const { return fTof; }// this should be ns
-
   
     bool Good() const { return true; }
 
@@ -64,12 +56,7 @@ class TUML : public TDetector {
     size_t GetSssdRawMult()  const { return SizeSssd(); }
     int    GetSssdMult()     const { return fSssdMult; }
     double GetXPosition()    const { return fXPosition; }
-  
-
-    //double GetBhro()       const;
-    //double AoQ()           const;
-    //double Beta()          const; 
-    
+      
     double Araw() const { return AoQ * Z; }
     double Am2Z() const { return Araw() - 2*Z; }
     double Am3Z() const { return Araw() - 3*Z; }
@@ -146,7 +133,6 @@ class TUML : public TDetector {
     double CalcAoQ();
     double CalcQ();
     double Beta_to_Gamma(double beta) const;
-//    double SetZ() const;
   
 
     double dE;

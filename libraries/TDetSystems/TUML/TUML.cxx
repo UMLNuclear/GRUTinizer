@@ -146,18 +146,6 @@ int TUML::BuildHits(std::vector<TRawEvent>& raw_data) {
 }
 
 
-////______________________________________________________________________________
-//double TUML::GetSssdEnergy() const {
-//  double sum = 0.00;
-//  for(size_t i=0; i<fSssd.size(); i++) {
-//    sum += fSssd.at(i).GetEnergy();
-//  }
-//  //std::cout << "sssd energy:   "  << sum << std::endl;
-//
-//  return sum * GValue::Value("Strip_Slope");
-//}
-
-
 //______________________________________________________________________________
 int TUML::CalcStrips() {
   // Determine x position based on centroid calculation.
@@ -199,32 +187,20 @@ int TUML::CalcStrips() {
 
 //______________________________________________________________________________
 double TUML::CalcTKE() {
-//  TKE = GetPin1().GetEnergy() * GValue::Value("TKE_Slope0") +
-//        GetPin2().GetEnergy() * GValue::Value("TKE_Slope1") +
-//        GetSssdEnergy()       * GValue::Value("TKE_Slope2") +
-//        GetImplant().GetEnergy() * GValue::Value("TKE_Slope3") +
-//        GValue::Value("TKE_Offset");
-  
   // Calculate dE, must use CHARGE since
   dE  = 0;
   dE += GetPin1().Charge()    * GValue::Value("Tke_Slope0");
   dE += GetPin2().Charge()    * GValue::Value("Tke_Slope1");
   dE += GetSssdGMEnergy()     * GValue::Value("Tke_Slope2");
 
-  
-  // Calculate total kinetic energy
-//  TKE = GetPin1().GetEnergy() +
-//        GetPin2().GetEnergy() +
-//        GetSssdEnergy()       +
-//        GetImplant().GetEnergy() +
-//        GValue::Value("TKE_Offset");
-  
+  // Calculate TKE = dE + Implant
   TKE = GetdE() +
         GetImplant().Charge() * GValue::Value("Tke_Slope3") +
         GValue::Value("Tke_Offset");
 
   return TKE;
 }
+
 
 //______________________________________________________________________________
 double TUML::CalcTof() {
@@ -279,12 +255,14 @@ double TUML::CalcdPoPx() {
   return GetdPoPx();
 }
 
+
 //______________________________________________________________________________
 double TUML::CalcBrho() {
   if(GetdPoPx()>-10) brho = GValue::Value("Brho0") * ( 1. + dPoPx / 100.);
   else             brho = 0;
   return brho;
 }
+
 
 //______________________________________________________________________________
 void TUML::CalcBetaGamma(){
@@ -297,6 +275,7 @@ void TUML::CalcBetaGamma(){
   
 }
 
+
 //______________________________________________________________________________
 double TUML::CalcZ() {
   Z = 0;
@@ -304,34 +283,16 @@ double TUML::CalcZ() {
     double beta2 = GetBeta()*GetBeta();
     if (beta2 > 0) {
       double dE_v = -1. + log(5930./(1./beta2 - 1.))/beta2; // See eq. A.5 in Tarasov et al., PRC 80 (2009)
+      
+      // Calibrate Z
       if (dE_v > 0 && dE > 0) {
-        //double dE = GetPin1().GetEnergy()*GValue::Value("Tke_Slope0") + GetPin2().GetEnergy()*GValue::Value("Tke_Slope1") + GetSssdEnergy()*GValue::Value("Tke_Slope2") + GValue::Value("TKE_Offset");
-//        double dE = GetPin1().GetEnergy()+GetPin2().GetEnergy()+GetSssdEnergy();
         double v = sqrt(GetdE() / dE_v);
         Z =  v*v * GValue::Value("Z2_slope") + v * GValue::Value("Z_slope") + GValue::Value("Z_offset");
-        
-        //int Zi = (double)Z + 0.5;
-        //dZ = (double)Z  - Zi;
       }
     }
   }
-  //set Z
+
   return Z;
-
-  
-//
-//      b2 = pid.beta*pid.beta;
-//      dE_v = -1.+log(5930./(1./b2 - 1.))/b2; // See eq. A.5 in Tarasov et al., PRC 80 (2009)
-//
-//  //    if (dE_v > 0 && detectors.pin01.energy.isValid()) {// Z is determined from a quadratic-polynom calibration
-//      if (dE_v > 0 && pid.dE.isValid()) {// Z is determined from a quadratic-polynom calibration
-//  //        v = sqrt(detectors.pin01.energy / dE_v);
-//          v = sqrt(pid.dE / dE_v);
-//          pid.Z = v * pid.Z_slope + pid.Z_offset;
-//          }
-//      }
-//
-
 }
 
 
@@ -346,11 +307,13 @@ double TUML::CalcdPoPz() {
   return GetdPoPz();
 }
 
+
 //______________________________________________________________________________
 double TUML::CalcdPoP(){
   dPoP = GetdPoPz() + GetdPoPx();
   return GetdPoP();
 }
+
 
 //______________________________________________________________________________
 void TUML::ReCalBrho(){
@@ -360,37 +323,14 @@ void TUML::ReCalBrho(){
 
 //______________________________________________________________________________
 double TUML::CalcAoQ() {
-//  double AoQ_local = -1;
+
   if(GetTof()>0 && beta>0 && beta<1 && gamma>0) {
     AoQ = brho / (3.1071 * beta * gamma);
   }else{
     AoQ = 0;
   }
-////   double dPoPx = GetXPosition()/GValue::Value("Dispersion");
-////   double beta = GValue::Value("Length") * (1 + dPoPx * GValue::Value("Disp_Length") /100.)  / GetTof() / GValue::Value("VC");
-////   double gamma = Beta_to_Gamma(beta);
-//   if (beta > 0 && beta < 1 )   {
-////       brho  = GValue::Value("Brho0") * ( 1 + dPoPx / 100.);
-////       if(Z>0) {
-////         double dZ = GValue::Value("Z_disp") - GetZ();
-////
-////         double dPoPz = sqrt(fabs(dZ))* GValue::Value("Disp_Z") / 100. ;
-////         if(dZ<0) dPoPz = -dPoPz;
-////
-////         double dPoP = dPoPz + dPoPx;
-////
-////        brho = GValue::Value("Brho0") * ( 1 + dPoP/100.);
-////
-////
-////       }
-//     AoQ_local = brho / 3.1071 / beta / gamma;
-//   } else  {
-//     gamma=1;
-//     beta=0;
-//    }
-// }
-  return GetAoQ();
   
+  return GetAoQ();
 }
 
 
@@ -457,42 +397,8 @@ void TUML::CalParameters() {
   ReCalBrho();
   CalcAoQ();
   CalcQ();
-  // CalA
-  // CalAraw
-  // CalZmQ
-
-//  // Calculate PID parameters
-//  double dPoPx = GetXPosition()/GValue::Value("Dispersion");
-//  brho  = GValue::Value("Brho0") * ( 1 + dPoPx / 100.);
-//  if(GetTof()>0){
-//    beta = GValue::Value("Length") * (1 + dPoPx * GValue::Value("Disp_Length") /100.)  / GetTof() / GValue::Value("VC");
-//  } else beta = 0;
-//  gamma = Beta_to_Gamma(beta);
-//  Z = SetZ();
   
-//  if(Z>0) {
-//    double dZ = GValue::Value("Z_disp") - GetZ();
-//
-//    double dPoPz = sqrt(fabs(dZ))* GValue::Value("Disp_Z") / 100. ;
-//    if(dZ<0) dPoPz = -dPoPz;
-//
-//    double dPoP = dPoPz + dPoPx;
-//
-//    brho = GValue::Value("Brho0") * ( 1 + dPoP/100.);
-//
-//
-//  }
-//
-//  //double AoQ; //!
-//  AoQ   = SetAoQ();
-  //double Q; //!
-//  if(AoQ > 0 && TKE > 0 && gamma>0) {
-//    Q = TKE / (gamma- 1.) / GValue::Value("AEM") / AoQ;
-//  }
 }
-
-
-
 
 
 //______________________________________________________________________________
