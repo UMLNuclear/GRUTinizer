@@ -191,7 +191,7 @@ double TUML::CalcTKE() {
   dE  = 0;
   dE += GetPin1().Charge()    * GValue::Value("Tke_Slope0");
   dE += GetPin2().Charge()    * GValue::Value("Tke_Slope1");
-  dE += GetSssdGMEnergy()     * GValue::Value("Tke_Slope2");
+  dE += GetSssdGMEnergy()     * GValue::Value("Tke_Slope2"); // Calibrate Gain-Matched energy sum.
 
   // Calculate TKE = dE + Implant
   TKE = GetdE() +

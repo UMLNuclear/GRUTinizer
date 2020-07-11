@@ -135,18 +135,18 @@ class TUML : public TDetector {
     double Beta_to_Gamma(double beta) const;
   
 
-    double dE;
-    double TKE;
+    double dE = 0.;
+    double TKE = 0.;
     double dPoPx;
     double dbrho;
-    double brho;
-    double beta;
-    double gamma;
-    double Z;
+    double brho = 0.;
+    double beta = 0.;
+    double gamma = 0.;
+    double Z = 0.;
     double dPoPz;
     double dPoP;
     double AoQ;
-    double Q;
+    double Q = 0.;
 
     double gamma_energy; 
     double gamma_time;   
@@ -154,7 +154,7 @@ class TUML : public TDetector {
    ////////////////////
    ////////////////////
    ////////////////////
-  ClassDef(TUML,5);
+  ClassDef(TUML,6);
 };
 
 #endif
