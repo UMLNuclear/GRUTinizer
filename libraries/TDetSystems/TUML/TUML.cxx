@@ -278,7 +278,7 @@ void TUML::CalcBetaGamma(){
 
 //______________________________________________________________________________
 double TUML::CalcZ() {
-  Z = 0;
+  Z = 0.0;
   if (GetBeta() > 0) {
     double beta2 = GetBeta()*GetBeta();
     if (beta2 > 0) {

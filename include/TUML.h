@@ -74,7 +74,7 @@ class TUML : public TDetector {
     double GetdPoPx() const { return dPoPx;  }
     double GetdBrho() const { return dbrho;  }
     double GetBrho()  const { return brho;   }
-    double GetZ()     const { return Z;      }
+    double GetZ()     const { return Z;      } // Do not call with TTree->Draw
     double GetdPoPz() const { return dPoPz;  }
     double GetdPoP()  const { return dPoP;   }
     double GetAoQ()   const { return AoQ;    }
@@ -137,19 +137,19 @@ class TUML : public TDetector {
 
     double dE = 0.;
     double TKE = 0.;
-    double dPoPx;
-    double dbrho;
+  double dPoPx = -100.;
+  double dbrho = -100.;
     double brho = 0.;
+    double Z = 0.;
     double beta = 0.;
     double gamma = 0.;
-    double Z = 0.;
-    double dPoPz;
-    double dPoP;
-    double AoQ;
+  double dPoPz = -100.;
+  double dPoP = -100.;
+  double AoQ = 0.;
     double Q = 0.;
 
-    double gamma_energy; 
-    double gamma_time;   
+  double gamma_energy = 0.;
+  double gamma_time = 0.;
 
    ////////////////////
    ////////////////////

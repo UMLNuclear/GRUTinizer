@@ -45,8 +45,10 @@ void GValue::Copy(TObject &obj) const {
 
 double GValue::Value(std::string name) {
   std::transform(name.begin(),name.end(),name.begin(),::toupper);
-  if(!fValueVector.count(name))
+  if(!fValueVector.count(name)) {
+    std::cerr << "---!!!WARNING: GValue = " << name << " not found!!!---" << std::endl;
     return sqrt(-1);
+  }
   return fValueVector.at(name)->GetValue();
 }
 
