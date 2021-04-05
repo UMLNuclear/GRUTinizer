@@ -76,7 +76,7 @@ public:
 
   void BuildFrom(TSmartBuffer& raw);
 
-  Double_t GetTime()            const { return (double)Timestamp() - (double)fT0; }
+  Double_t GetTime()            const { return (double)Timestamp() + (double)fT0; }
   Double_t GetT0()              const { return fT0; }
   Int_t    GetAddress()         const { return fAddress;        }
   Int_t    GetXtalId()          const { return fCrystalId;      }
